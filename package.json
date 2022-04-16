@@ -6,6 +6,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AllisanLu/CS4400Phase4.git"
+  },
   "author": "Allison Lu, Jason Guo, Gabriel Chen, Ciaran McCollum",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AllisanLu/CS4400Phase4/issues"
+  },
+  "homepage": "https://github.com/AllisanLu/CS4400Phase4#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "mysql2": "^2.3.3"
+  }
 }
