@@ -25,6 +25,7 @@ function addCorporation(event) {
 function responseHandler() {
     //let message = document.getElementById("message")
    // message.style.display = "block"
+//send to next page here
     if (this.response.success) {
         console.log(this.response.message);
     } else {

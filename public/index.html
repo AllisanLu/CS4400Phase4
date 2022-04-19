@@ -4,9 +4,23 @@
     <title>CS4400</title>
 </head>
 <body>
-    <h1>Hello!</h1>
-    <p>I image I put links to the pages that work here:
-    <a href="createCorporation">Create Corporation</a>
-    <a href="createBank">Create Bank</a></p>
+    <form method="POST" action="/attempt_login">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" placeholder="username">
+        </div>
+        <div class="password">
+            <label for="password">Password:</label>
+            <input type="password" name="password" , id="password" placeholder="password">
+        </div>
+        <div>
+            <input type="submit" value="login" id="login">
+        </div>
+    </form>
+    <p hidden id="message"></p>
+    <div>
+        <p>Not a user? <a href="registration">Register here</a></p>
+    </div>
+
 </body>
 </html>
