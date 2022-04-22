@@ -354,7 +354,7 @@ sp_main: begin
                 join bank_account on checking.protectionBank = bank_account.bankID and checking.protectionAccount = bank_account.accountID
                 join access as overdraft_acct on checking.protectionBank = overdraft_acct.bankID and checking.protectionAccount = overdraft_acct.accountID
                 set overdraft_acct.dtAction = ip_dtAction
-                where ip_requester = access.perID and ip_bankID = bank_account.bankID and ip_accountID = bank_account.accountID;
+                where ip_requester = access.perID and ip_bankID = checking.bankID and ip_accountID = checking.accountID;
     
         end if;
     end if;
