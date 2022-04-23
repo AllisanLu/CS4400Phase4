@@ -5,7 +5,7 @@ let shortname = document.getElementById("short_name")
 let reserved = document.getElementById("reserved_assets")
 
 function addCorporation(event) {
-    //event.preventDefault()
+    event.preventDefault()
     let xhr = new XMLHttpRequest
     xhr.addEventListener("load", responseHandler)
     query = `cid=${cid.value}&longname=${longname.value}&shortname=${shortname.value}&reserved=${reserved.value}`

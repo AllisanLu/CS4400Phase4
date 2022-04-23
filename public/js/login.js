@@ -22,8 +22,6 @@ function login(event) {
 function responseHandler() {
     let message = document.getElementById("message")
     message.style.display = "block"
-        //use this to send the next page if login in good
-    //go to specifced pages on what user this person is
     if (this.response.success) {
        message.innerText = this.response.message
     } else {
