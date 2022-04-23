@@ -303,7 +303,7 @@ create procedure account_deposit (in ip_requester varchar(100), in ip_deposit_am
     in ip_bankID varchar(100), in ip_accountID varchar(100), in ip_dtAction date)
 sp_main: begin
     if ip_requester not in (select perID from access where ip_bankID = bankID and ip_accountID = accountID) then leave sp_main; end if;
-    update bank_account set balance = balance + ip_deposit_amount where ip_bankID = bankID and ip_accountID = accountID;
+    update bank_account set balance = ifnull(balance, 0) + ifnull(ip_deposit_amount, 0) where ip_bankID = bankID and ip_accountID = accountID;
     update access set dtAction = ip_dtAction where ip_requester = perID and ip_bankID = bankID and ip_accountID = accountID;
 end //
 delimiter ;
