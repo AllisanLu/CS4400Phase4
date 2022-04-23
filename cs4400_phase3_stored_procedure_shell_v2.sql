@@ -119,7 +119,9 @@ delimiter //
 create procedure stop_customer_role (in ip_perID varchar(100))
 sp_main: begin
     if ip_perID not in (select perID from customer) then leave sp_main; end if;
-    if (select count(*) from access where accountID = (select accountID from access where ip_perID=perID)) = 1 then leave sp_main; end if;
+    if 1 in (select count(*) from access
+    join (select perID, bankID, accountID from access where perID=ip_perID) as accts on access.bankID=accts.bankID and access.accountID=accts.accountID group by access.bankID, access.accountID)
+    then leave sp_main; end if;
     
     delete from customer_contacts where ip_perID=perID;
     delete from access where ip_perID=perID;
