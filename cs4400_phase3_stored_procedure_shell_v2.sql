@@ -96,7 +96,9 @@ sp_main: begin
     -- Implement your code here
     if ip_perID not in (select perID from employee) then leave sp_main; end if;
     if ip_perID in (select manager from bank) then leave sp_main; end if;
-    if (select count(*) from workFor where bankID in (select bankID from workFor where ip_perID = perID)) = 1 then leave sp_main; end if;
+    if 1 in (select count(*) from workfor
+    join (select bankID, perID from workfor where perID=ip_perID) as works on workfor.bankID=works.bankID group by workfor.bankID)
+    then leave sp_main; end if;
     
     delete from workFor where ip_perID = perID;
     delete from employee where ip_perID = perID;
