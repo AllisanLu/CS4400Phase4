@@ -73,7 +73,37 @@ app.post("/addCorporation", function (req, res) {
     });
 })
 
+//bank stuff
+// https://stackoverflow.com/questions/64145576/populate-html-dropdownlist-with-fetched-mysql-data-using-node-js-express-js
+app.get("/createBank", function (req, res) {
+    // let call = 'select corpID from `corporation`'
+    // connection.query(call, [], function(err, result) {
+    //     if (err) {
+    //         res.json({ success: false, message: "server error" })
+    //     }
+    // }).then(result => {
+    //     res.render('index', {corpIDs: result.recordset })
+    // }).catch(err => {
+        
+    // })
+
+    res.sendFile(__dirname + "/public/" + "createBank.html");
+});
+
+app.post("/addBank", function (req, res) {
+    console.log("adding bank");
+    let call = 'call create_bank(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    connection.query(call, [req.body.bid, req.body.bankName, req.body.street, req.body.city,
+                            req.body.state, req.body.zip, req.body.reserved, req.body.cid, req.body.manager, req.body.employee], function (err, rows) {
+        if (err) {
+            res.json({ success: false, message: "server error" })
+        }
+    });
+})
+
 
 app.listen(3000, function () {
     console.log("Listening on port 3000...");
 });
+
+[]
