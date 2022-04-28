@@ -3,6 +3,7 @@ let cid = document.getElementById("id")
 let longname = document.getElementById("long_name")
 let shortname = document.getElementById("short_name")
 let reserved = document.getElementById("reserved_assets")
+let cancel = document.getElementById("cancel")
 
 function addCorporation(event) {
     event.preventDefault()

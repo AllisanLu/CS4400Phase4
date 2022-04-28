@@ -1,4 +1,5 @@
 let registerButton = document.getElementById("create")
+let registerButton = document.getElementById("create")
 let bid = document.getElementById("bid")
 let bankName = document.getElementById("bname")
 let street = document.getElementById("street")
@@ -40,4 +41,5 @@ function responseHandler() {
       //  message.innerText = this.response.message
     }
 }
+
 registerButton.addEventListener("click", addBank)
