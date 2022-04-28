@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CS4400</title>
+    <script src="/js/createBank.js" defer></script>
+</head>
+<body>
+    <h1>Create Bank</h1>
+    <form>
+        <div><label for="bid">Bank ID:</label> <input id="bid" /></div>
+        <div><label for="bname">Name:</label> <input id="bname" /></div>
+        <h3>Address Info</h3>
+        <div><label for="street">Street</label> <input id="street" /></div>
+        <div><label for="city">City</label> <input id="city" /></div>
+        <div><label for="state">State</label> <input id="state" /></div>
+        <div><label for="zip">Zip code</label> <input id="zip" /></div>
+        <h3>Operation Info</h3>
+        <div><label for="reserved_assets">Reserved Assets</label> <input id="reserved_assets" /></div>
+        <!-- drop downs :D -->
+        <div>
+            <label for="manager"></label>
+            <select id="manager">
+                <% for (const i in employees) { %>
+                    <option value="<%= employees[i].perID %>"> <%= employees[i].perID %> </option>
+                <% } %>
+            </select>
+        <div>
+            <label for="cid"></label>
+            <select id="cid">
+                <% for (const i in corpIDs) { %>
+                    <option value="<%= corpIDs[i].corpID %>"> <%= corpIDs[i].corpID %> </option>
+                <% } %>
+            </select>
+        </div>
+        <div>
+            <label for="employee"></label>
+            <select id="employee">
+                <% for (const i in employees) { %>
+                    <option value="<%= employees[i].perID %>"> <%= employees[i].perID %> </option>
+                <% } %>
+            </select>
+        <button>Cancel</button>
+        <input type="submit" value="Create Bank" id="create"> 
+    </form>
+</body>
+</html>
