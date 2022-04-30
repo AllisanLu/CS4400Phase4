@@ -84,7 +84,7 @@ app.get("/createFee", function (req, res) {
         })
     })
 }).post("/getAccounts", function (req, res) {
-    let call = 'select accountID from bank_account where bankID = ?'
+    let call = 'select accountID from interest_bearing where bankID = ?'
     connection.query(call, [req.body.bankID], function (err, result) {
         if (err) {
             res.json({ success: false, message: "" })

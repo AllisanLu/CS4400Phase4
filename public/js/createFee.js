@@ -63,4 +63,4 @@ function updateAccounts(event) {
 }
 
 registerButton.addEventListener("click", createFee)
-bank.addEventListener("change", updateAccounts)
+bank.addEventListener("change", updateAccounts) 
