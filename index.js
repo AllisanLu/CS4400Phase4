@@ -66,6 +66,9 @@ app.get("/adminMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "Admin.html");
 })
 
+/**
+ * Create Fee
+ */
 app.get("/createFee", function (req, res) {
     let call = 'select bankID from bank'
     let call2 = 'select bankID, accountID from bank_account'
@@ -80,9 +83,7 @@ app.get("/createFee", function (req, res) {
             }
         })
     })
-});
-
-app.post("/getAccounts", function (req, res) {
+}).post("/getAccounts", function (req, res) {
     let call = 'select accountID from bank_account where bankID = ?'
     connection.query(call, [req.body.bankID], function (err, result) {
         if (err) {
@@ -91,9 +92,7 @@ app.post("/getAccounts", function (req, res) {
             res.json({ success: true, result: result })
         }
     });
-})
-
-app.post("/addFee", function (req, res) {
+}).post("/addFee", function (req, res) {
     console.log("adding fee");
     let call = 'call create_fee(?, ?, ?)';
     connection.query(call, [req.body.bank, req.body.account, req.body.type], function (err, rows) {
@@ -117,9 +116,7 @@ app.post("/addFee", function (req, res) {
  */
 app.get("/createCorporation", function (req, res) {
     res.sendFile(__dirname + "/public/" + "createCorporation.html");
-})
-
-app.post("/addCorporation", function (req, res) {
+}).post("/addCorporation", function (req, res) {
     console.log("adding corporation");
     let call = 'call create_corporation(?, ?, ?, ?)'
     connection.query(call, [req.body.cid, req.body.shortname, req.body.longname, req.body.reserved], function (err, rows) {
@@ -148,9 +145,7 @@ app.get("/createBank", function (req, res) {
             }
         })
     })
-});
-
-app.post("/addBank", function (req, res) {
+}).post("/addBank", function (req, res) {
     console.log("adding bank");
     let call = 'call create_bank(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     connection.query(call, [req.body.bid, req.body.name, req.body.street, req.body.city,
@@ -161,14 +156,14 @@ app.post("/addBank", function (req, res) {
     });
 });
 
+
+
 /**
  * Pay Employees
  */
 app.get("/payEmployees", function (req, res) {
     res.sendFile(__dirname + "/public/" + "payEmployees.html");
-})
-
-app.post("/payAllEmployees", function (req, res) {
+}).post("/payAllEmployees", function (req, res) {
     console.log("paying all employees");
     let call = 'call pay_employees()';
     connection.query(call, [], function (err, rows) {
