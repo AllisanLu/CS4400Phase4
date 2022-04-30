@@ -116,10 +116,25 @@ app.post("/addBank", function (req, res) {
         if (err) {
             res.json({ success: false, message: "Could not create bank" })
         }
-        console.log(rows)
     });
 });
 
+/**
+ * Pay Employees
+ */
+app.get("/payEmployees", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "payEmployees.html");
+})
+
+app.post("/payAllEmployees", function (req, res) {
+    console.log("paying all employees");
+    let call = 'call pay_employees()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({ success: false, message: "Could not create corporation" })
+        }
+    });
+})
 
 app.listen(3000, function () {
     console.log("Listening on port 3000...");
