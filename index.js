@@ -58,6 +58,48 @@ app.get("/adminMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "Admin.html");
 })
 
+app.get("/createFee", function (req, res) {
+    let call = 'select bankID from bank'
+    let call2 = 'select bankID, accountID from bank_account'
+    connection.query(call, [], function (err, result1) {
+        // AHHHH gotta make it like async????
+        //or I can make a 2d array or map or something
+        connection.query(call2, [], function (err, result2) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                res.render(__dirname + "/public/" + "createFee.ejs", { banks: result1, accounts: result2 })
+            }
+        })
+    })
+});
+
+app.post("/getAccounts", function (req, res) {
+    let call = 'select accountID from bank_account where bankID = ?'
+    connection.query(call, [req.body.bankID], function (err, result) {
+        if (err) {
+            res.json({ success: false, message: "" })
+        } else {
+            res.json({ success: true, result: result })
+        }
+    });
+})
+
+app.post("/addFee", function (req, res) {
+    console.log("adding fee");
+    let call = 'call create_fee(?, ?, ?)';
+    connection.query(call, [req.body.bank, req.body.account, req.body.type], function (err, rows) {
+        if (err) {
+            console.log(err)
+            res.json({ success: false, message: "Could not create fee" })
+            console.log("could not add fee")
+        } else {
+            res.json({ success: true, message: "added fee" })
+            console.log("added fee")
+        }
+    });
+});
+
 
 //corporation stuff
 app.get("/createCorporation", function (req, res) {
