@@ -22,13 +22,14 @@ function createFee(event) {
 }
 
 function responseHandler() {
-    //let message = document.getElementById("message")
-    // message.style.display = "block"
+    let message = document.getElementById("message")
+    message.style.display = "block"
     if (this.response.success) {
-        console.log(this.response.message);
+        message.innerText = this.response.message;
+        window.location.href = "index";
     } else {
         console.log(this.response.success)
-        //  message.innerText = this.response.message
+        message.innerText = this.response.message
     }
 }
 
