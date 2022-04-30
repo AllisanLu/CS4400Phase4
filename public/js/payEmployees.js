@@ -1,4 +1,5 @@
 let pay = document.getElementById("pay")
+let cancel = document.getElementById("cancel")
 
 function payEmployees(event) {
     event.preventDefault()
@@ -17,6 +18,9 @@ function payEmployees(event) {
     // this is to prevent the data from being easily sniffed
     console.log("test")
     xhr.send(query)
+
+    // Redirect back to admin menu
+    window.location.href='/adminMenu'
 }
 
 function responseHandler() {
@@ -30,5 +34,4 @@ function responseHandler() {
       //  message.innerText = this.response.message
     }
 }
-
 pay.addEventListener("click", payEmployees)

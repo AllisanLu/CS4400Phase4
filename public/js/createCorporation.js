@@ -3,7 +3,6 @@ let cid = document.getElementById("id")
 let longname = document.getElementById("long_name")
 let shortname = document.getElementById("short_name")
 let reserved = document.getElementById("reserved_assets")
-let cancel = document.getElementById("cancel")
 
 function addCorporation(event) {
     event.preventDefault()
@@ -21,6 +20,9 @@ function addCorporation(event) {
     // notice the query string is passed as a parameter in xhr.send()
     // this is to prevent the data from being easily sniffed
     xhr.send(query)
+
+    // Redirect back to admin menu
+    window.location.href='/adminMenu'
 }
 
 function responseHandler() {
