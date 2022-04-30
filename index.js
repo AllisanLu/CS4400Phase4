@@ -27,8 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 app.post("/attempt_login", function (req, res) {
     // we check for the username and password to match.
     connection.query("select pwd from person where perID = ?", [req.body.username], function (err, rows) {
-        if (err) {
-            res.json({ success: false, message: "user doesn't exists" });
+        if (err || rows.length <= 0) {
+            res.json({ success: false, message: "user doesn't exists" })
         } else {
             storedPassword = rows[0].pwd // rows is an array of objects e.g.: [ { password: '12345' } ]
             // bcrypt.compareSync let's us compare the plaintext password to the hashed password we stored in our database
@@ -43,7 +43,8 @@ app.post("/attempt_login", function (req, res) {
         if (authenticated) {
             connection.query("select perID from system_admin where perID = ?", [req.body.username], function (err, rows) {
                 if (!err) {
-                    res.redirect("/adminMenu")
+                   // res.redirect("/adminMenu")
+                    res.json({ success: true, message: "admin" })
                 } else {
                     res.json({ success: true, message: "logged in" })
                 }
@@ -68,7 +69,7 @@ app.post("/addCorporation", function (req, res) {
     let call = 'call create_corporation(?, ?, ?, ?)'
     connection.query(call, [req.body.cid, req.body.shortname, req.body.longname, req.body.reserved], function (err, rows) {
         if (err) {
-            res.json({ success: false, message: "server error" })
+            res.json({ success: false, message: "Could not create corporation" })
         }
     });
 })
@@ -79,8 +80,12 @@ app.get("/createBank", function (req, res) {
     let call = 'select corpID from corporation'
     let call2 = 'select perID from employee where perID not in (select manager from bank)'
     connection.query(call, [], function(err, result1) {
-        connection.query(call2, [], function(err, result2) {
-            res.render(__dirname + "/public/" + "createBank.ejs", {corpIDs: result1, employees: result2 })
+        connection.query(call2, [], function (err, result2) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                res.render(__dirname + "/public/" + "createBank.ejs", { corpIDs: result1, employees: result2 })
+            }
         })
     })
 });
@@ -96,7 +101,7 @@ app.post("/addBank", function (req, res) {
     connection.query(call, [req.body.bid, req.body.name, req.body.street, req.body.city,
                             req.body.state, req.body.zip, req.body.reserved, req.body.cid, req.body.manager, req.body.employee], function (err, rows) {
         if (err) {
-            res.json({ success: false, message: "server error" })
+            res.json({ success: false, message: "Could not create bank" })
         }
         console.log(rows)
     });

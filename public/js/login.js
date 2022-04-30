@@ -20,10 +20,14 @@ function login(event) {
 }
 
 function responseHandler() {
+    console.log("response");
     let message = document.getElementById("message")
     message.style.display = "block"
     if (this.response.success) {
-       message.innerText = this.response.message
+        message.innerText = this.response.message;
+        if (this.response.message == "admin") {
+            window.location.href = "adminMenu";
+        }
     } else {
         console.log(this.response.success)
         message.innerText = this.response.message
