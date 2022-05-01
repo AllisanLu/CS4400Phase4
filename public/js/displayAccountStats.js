@@ -1,13 +1,10 @@
 function createTable() {
-    alert("in table")
+    let stats = JSON.parse(accountStats)
     var cols = [];
-    alert(accountStats);
-    console.log(accountStats);
-    for (var i = 0; i < accountStats.length; i++) {
-        for (var k in accountStats[i]) {
+
+    for (var i = 0; i < stats.length; i++) {
+        for (var k in stats[i]) {
             if (cols.indexOf(k) === -1) {
-                 
-                // Push all keys to the array
                 cols.push(k);
             }
         }
@@ -30,15 +27,14 @@ function createTable() {
     }
      
     // Adding the data to the table
-    for (var i = 0; i < list.length; i++) {
-         
+    for (var i = 0; i < stats.length; i++) {  
         // Create a new row
         trow = table.insertRow(-1);
         for (var j = 0; j < cols.length; j++) {
             var cell = trow.insertCell(-1);
              
             // Inserting the cell at particular place
-            cell.innerHTML = accountStats[i][cols[j]];
+            cell.innerHTML = stats[i][cols[j]];
         }
     }
      
