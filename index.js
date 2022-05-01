@@ -7,6 +7,7 @@ let user = "";
 
 const connection = mysql.createConnection({
     host: "localhost",
+    port: 3306,
     user: "root",
     password: "Wahaha!!",
     database: "bank_management"
@@ -70,7 +71,7 @@ app.post("/attempt_login", function (req, res) {
 
 /**
  * Admin Screen
- * Sends Admin.html displaying all options avaiable to the admin
+ * Sends Admin.html displaying all actions avaiable to the admin
  */
 app.get("/adminMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "Admin.html");
@@ -103,7 +104,15 @@ app.post("/")
 
 
 /**
- * Create Fee
+ * View stats screen
+ * Sends viewStats.html displaying all possible stats to view to the admin
+ */
+app.get("/viewStats", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "viewStats.html");
+})
+
+/**
+ * Create Fee for interest bearing accounts
  */
 app.get("/createFee", function (req, res) {
     let call = 'select bankID from bank'
@@ -155,9 +164,11 @@ app.get("/createCorporation", function (req, res) {
 }).post("/addCorporation", function (req, res) {
     console.log("adding corporation");
     let call = 'call create_corporation(?, ?, ?, ?)'
-    connection.query(call, [req.body.cid, req.body.shortname, req.body.longname, req.body.reserved], function (err, rows) {
+    connection.query(call, [req.body.cid, req.body.shortname, req.body.longname, req.body.reserved], function (err, results) {
         if (err) {
             res.json({ success: false, message: "Could not create corporation" })
+        } else {
+            res.json({ success: true, message: "Created corporation" })
         }
     });
 })
@@ -188,6 +199,8 @@ app.get("/createBank", function (req, res) {
                             req.body.state, req.body.zip, req.body.reserved, req.body.cid, req.body.manager, req.body.employee], function (err, rows) {
         if (err) {
             res.json({ success: false, message: "Could not create bank" })
+        } else {
+            res.json({ success: true, message: "Created bank" })
         }
     });
 });
@@ -200,16 +213,101 @@ app.get("/managerMenu", function (req, res) {
 })
 
 /**
- * Pay Employees
+ * Pays all employees in the system
  */
 app.get("/payEmployees", function (req, res) {
     res.sendFile(__dirname + "/public/" + "payEmployees.html");
 }).post("/payAllEmployees", function (req, res) {
     console.log("paying all employees");
     let call = 'call pay_employees()';
-    connection.query(call, [], function (err, rows) {
+    connection.query(call, [], function (err, results) {
         if (err) {
             res.json({ success: false, message: "Could not pay employees" })
+        } else {
+            res.json({ sucess: true, message: "Employees paid" })
+        }
+    })
+})
+
+
+/**
+ * Display Account Stats
+ */
+ app.get("/displayAccountStats", function (req, res) {
+    let call = 'select * from display_account_stats';
+    connection.query(call, function(err, results) {
+        if (err) {
+            res.json({ success: false, message: "Could not display account stats" })
+        } else {
+            res.render(__dirname + "/public/" + "displayAccountStats.ejs", { accountStats: results })
+        }
+    })
+});
+
+/**
+ * View Bank Stats
+ */
+ app.get("/viewBankStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewBankStats.html")
+})
+
+app.post("/displayBankStats", function (req, res) {
+    console.log("viewing account stats");
+    let call = 'call display_bank_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view bank stats"})
+        }
+    });
+})
+
+/**
+ * View Corporation Stats
+ */
+ app.get("/viewCorporationStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewCorporationStats.html")
+})
+
+app.post("/displayCorporationStats", function (req, res) {
+    console.log("viewing corporation stats");
+    let call = 'call display_corporation_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view corporation stats"})
+        }
+    });
+})
+
+/**
+ * View Customer Stats
+ */
+ app.get("/viewCustomerStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewCustomerStats.html")
+})
+
+app.post("/displayCustomerStats", function (req, res) {
+    console.log("viewing customer stats");
+    let call = 'call display_customer_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view customer stats"})
+        }
+    });
+})
+
+/**
+ * View Employee Stats
+ */
+ app.get("/viewEmployeeStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewEmployeeStats.html")
+})
+
+app.post("/displayEmployeeStats", function (req, res) {
+    console.log("viewing employee stats");
+    let call = 'call display_employee_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view account stats"})
         }
     });
 })
@@ -217,3 +315,5 @@ app.get("/payEmployees", function (req, res) {
 app.listen(3000, function () {
     console.log("Listening on port 3000...");
 });
+
+
