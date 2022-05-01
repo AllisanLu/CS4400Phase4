@@ -60,14 +60,22 @@ app.post("/attempt_login", function (req, res) {
 
 /**
  * Admin Screen
- * Sends Admin.html displaying all options avaiable to the admin
+ * Sends Admin.html displaying all actions avaiable to the admin
  */
 app.get("/adminMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "Admin.html");
 })
 
 /**
- * Create Fee
+ * View stats screen
+ * Sends viewStats.html displaying all possible stats to view to the admin
+ */
+app.get("/viewStats", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "viewStats.html");
+})
+
+/**
+ * Create Fee for interest bearing accounts
  */
 app.get("/createFee", function (req, res) {
     let call = 'select bankID from bank'
@@ -119,9 +127,11 @@ app.get("/createCorporation", function (req, res) {
 }).post("/addCorporation", function (req, res) {
     console.log("adding corporation");
     let call = 'call create_corporation(?, ?, ?, ?)'
-    connection.query(call, [req.body.cid, req.body.shortname, req.body.longname, req.body.reserved], function (err, rows) {
+    connection.query(call, [req.body.cid, req.body.shortname, req.body.longname, req.body.reserved], function (err, results) {
         if (err) {
             res.json({ success: false, message: "Could not create corporation" })
+        } else {
+            res.json({ success: true, message: "Created corporation" })
         }
     });
 })
@@ -152,27 +162,44 @@ app.get("/createBank", function (req, res) {
                             req.body.state, req.body.zip, req.body.reserved, req.body.cid, req.body.manager, req.body.employee], function (err, rows) {
         if (err) {
             res.json({ success: false, message: "Could not create bank" })
+        } else {
+            res.json({ success: true, message: "Created bank" })
         }
     });
 });
 
 
-
 /**
- * Pay Employees
+ * Pays all employees in the system
  */
 app.get("/payEmployees", function (req, res) {
     res.sendFile(__dirname + "/public/" + "payEmployees.html");
 }).post("/payAllEmployees", function (req, res) {
     console.log("paying all employees");
     let call = 'call pay_employees()';
-    connection.query(call, [], function (err, rows) {
+    connection.query(call, [], function (err, results) {
         if (err) {
             res.json({ success: false, message: "Could not create corporation" })
+        } else {
+            res.json({ sucess: true, message: "Employees paid" })
         }
-    });
+    })
 })
 
 app.listen(3000, function () {
     console.log("Listening on port 3000...");
+});
+
+/**
+ * Display Account Stats
+ */
+app.get("/displayAccountStats", function (req, res) {
+    let call = 'select * from display_account_stats';
+    connection.query(call, function(err, results) {
+        if (err) {
+            res.json({ success: false, message: "Could not display account stats" })
+        } else {
+            res.render(__dirname + "/public/" + "displayAccountStats.ejs", { accountStats: results })
+        }
+    })
 });
