@@ -3,6 +3,8 @@ const { json } = require("express/lib/response");
 const mysql = require("mysql2")
 let authenticated = false;
 
+let user = "";
+
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -30,6 +32,7 @@ app.use(express.urlencoded({ extended: false }));
  * If the user was sucessfully authenticated, check whether user is an admin
  */
 app.post("/attempt_login", function (req, res) {
+    authenticated = false;
     // we check for the username and password to match.
     connection.query("select pwd from person where perID = ?", [req.body.username], function (err, rows) {
         if (err || rows.length <= 0) {
@@ -47,11 +50,18 @@ app.post("/attempt_login", function (req, res) {
         //checking to see if admin
         if (authenticated) {
             connection.query("select perID from system_admin where perID = ?", [req.body.username], function (err, rows) {
-                if (!err) {
+                if (!err && rows.length > 0) {
                    // res.redirect("/adminMenu")
                     res.json({ success: true, message: "admin" })
                 } else {
-                    res.json({ success: true, message: "logged in" })
+                    connection.query("select perID from customer where perID = ?", [req.body.username], function (err, rows) {
+                        if (!err) {
+                            user = rows[0].perID
+                            res.json({ success: true, message: "customer" })
+                        } else {
+                            res.json({ success: true, message: "logged in" })
+                        }
+                    })
                 }
             })
         }
@@ -65,6 +75,11 @@ app.post("/attempt_login", function (req, res) {
 app.get("/adminMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "Admin.html");
 })
+
+app.get("/customerMenu", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "customerMenu.html");
+})
+
 
 /**
  * Create Fee
