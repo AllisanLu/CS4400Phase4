@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "Wahaha!!",
+    password: "astroslime123",
     database: "bank_management"
 });
 
@@ -245,72 +245,69 @@ app.get("/payEmployees", function (req, res) {
 });
 
 /**
- * View Bank Stats
+ * Display Bank Stats
  */
- app.get("/viewBankStats", function (req, res) {
-    res.sendFile(_dirname + "/public/" + "viewBankStats.html")
-})
 
-app.post("/displayBankStats", function (req, res) {
+app.get("/displayBankStats", function (req, res) {
     console.log("viewing account stats");
     let call = 'call display_bank_stats()';
     connection.query(call, [], function (err, rows) {
         if (err) {
             res.json({success: false, message: "Could not view bank stats"})
+        } else {
+            res.render(__dirname + "/public/" + "displayBankStats.ejs", { bankStats: results})
         }
-    });
-})
+    })
+});
 
 /**
  * View Corporation Stats
  */
- app.get("/viewCorporationStats", function (req, res) {
-    res.sendFile(_dirname + "/public/" + "viewCorporationStats.html")
-})
 
-app.post("/displayCorporationStats", function (req, res) {
+app.get("/displayCorporationStats", function (req, res) {
     console.log("viewing corporation stats");
     let call = 'call display_corporation_stats()';
     connection.query(call, [], function (err, rows) {
         if (err) {
             res.json({success: false, message: "Could not view corporation stats"})
+        } else {
+            res.render(__dirname + "/public/" + "displayCorporationStats.ejs", { corporationStats: results})
         }
-    });
-})
+    })
+});
 
 /**
  * View Customer Stats
  */
- app.get("/viewCustomerStats", function (req, res) {
-    res.sendFile(_dirname + "/public/" + "viewCustomerStats.html")
-})
 
-app.post("/displayCustomerStats", function (req, res) {
+
+app.get("/displayCustomerStats", function (req, res) {
     console.log("viewing customer stats");
     let call = 'call display_customer_stats()';
     connection.query(call, [], function (err, rows) {
         if (err) {
             res.json({success: false, message: "Could not view customer stats"})
+        } else {
+            res.render(__dirname + "/public/" + "displayCustomerStats.ejs" , { customerStats: results})
         }
-    });
-})
+    })
+});
 
 /**
  * View Employee Stats
  */
- app.get("/viewEmployeeStats", function (req, res) {
-    res.sendFile(_dirname + "/public/" + "viewEmployeeStats.html")
-})
 
-app.post("/displayEmployeeStats", function (req, res) {
+app.get("/displayEmployeeStats", function (req, res) {
     console.log("viewing employee stats");
     let call = 'call display_employee_stats()';
     connection.query(call, [], function (err, rows) {
         if (err) {
             res.json({success: false, message: "Could not view account stats"})
+        } else {
+            res.render(__dirname + "/public/" + "displayEmployeeStats.ejs", { employeeStats: results})
         }
-    });
-})
+    })
+});
 
 app.listen(3000, function () {
     console.log("Listening on port 3000...");
