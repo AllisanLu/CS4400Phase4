@@ -5,8 +5,9 @@ let authenticated = false;
 
 const connection = mysql.createConnection({
     host: "localhost",
+    port: 3306,
     user: "root",
-    password: "Wahaha!!",
+    password: "",
     database: "bank_management"
 });
 
@@ -132,6 +133,92 @@ app.post("/payAllEmployees", function (req, res) {
     connection.query(call, [], function (err, rows) {
         if (err) {
             res.json({ success: false, message: "Could not create corporation" })
+        }
+    });
+})
+
+
+/**
+ * View Account Stats
+ */
+app.get("/viewAccountStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewAccountStats.html")
+})
+
+app.post("/displayAccountStats", function (req, res) {
+    console.log("viewing account stats");
+    let call = 'call display_account_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view account stats"})
+        }
+    });
+})
+
+/**
+ * View Bank Stats
+ */
+ app.get("/viewBankStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewBankStats.html")
+})
+
+app.post("/displayBankStats", function (req, res) {
+    console.log("viewing account stats");
+    let call = 'call display_bank_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view bank stats"})
+        }
+    });
+})
+
+/**
+ * View Corporation Stats
+ */
+ app.get("/viewCorporationStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewCorporationStats.html")
+})
+
+app.post("/displayCorporationStats", function (req, res) {
+    console.log("viewing corporation stats");
+    let call = 'call display_corporation_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view corporation stats"})
+        }
+    });
+})
+
+/**
+ * View Customer Stats
+ */
+ app.get("/viewCustomerStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewCustomerStats.html")
+})
+
+app.post("/displayCustomerStats", function (req, res) {
+    console.log("viewing customer stats");
+    let call = 'call display_customer_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view customer stats"})
+        }
+    });
+})
+
+/**
+ * View Employee Stats
+ */
+ app.get("/viewEmployeeStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewEmployeeStats.html")
+})
+
+app.post("/displayEmployeeStats", function (req, res) {
+    console.log("viewing employee stats");
+    let call = 'call display_employee_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view account stats"})
         }
     });
 })
