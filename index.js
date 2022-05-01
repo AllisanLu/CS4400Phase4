@@ -76,9 +76,30 @@ app.get("/adminMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "Admin.html");
 })
 
+app.get("/manageUsers", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "manageUsers.html");
+})
+
 app.get("/customerMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "customerMenu.html");
 })
+
+/**
+ *  Customer Role stuff (employee -> customer)
+ */
+app.get("/createCustomerRole", function (req, res) {
+    let call = 'select perID from employee'
+    connection.query(call, [], function (err, result) {
+        if (err) {
+            res.json({ success: false, message: "" })
+        } else {
+            res.render(__dirname + "/public/" + "customerMenu.html", { perIDs: result });
+        }
+    })
+})
+
+app.post("/")
+
 
 
 /**
@@ -171,7 +192,12 @@ app.get("/createBank", function (req, res) {
     });
 });
 
-
+/*
+ * Manager Menu
+ */
+app.get("/managerMenu", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "Manager.html");
+})
 
 /**
  * Pay Employees
@@ -183,7 +209,7 @@ app.get("/payEmployees", function (req, res) {
     let call = 'call pay_employees()';
     connection.query(call, [], function (err, rows) {
         if (err) {
-            res.json({ success: false, message: "Could not create corporation" })
+            res.json({ success: false, message: "Could not pay employees" })
         }
     });
 })
