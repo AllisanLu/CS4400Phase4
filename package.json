@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/AllisanLu/CS4400Phase4#readme",
   "dependencies": {
+    "ejs": "^3.1.7",
     "express": "^4.17.3",
     "mysql2": "^2.3.3"
   }

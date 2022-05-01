@@ -1,4 +1,5 @@
 let pay = document.getElementById("pay")
+let cancel = document.getElementById("cancel")
 
 function payEmployees(event) {
     event.preventDefault()
@@ -17,18 +18,20 @@ function payEmployees(event) {
     // this is to prevent the data from being easily sniffed
     console.log("test")
     xhr.send(query)
+
+    // Redirect back to admin menu
+    window.location.href='/adminMenu'
 }
 
 function responseHandler() {
-    //let message = document.getElementById("message")
-   // message.style.display = "block"
-//send to next page here
+    let message = document.getElementById("message")
+    message.style.display = "block"
     if (this.response.success) {
-        console.log(this.response.message);
+        message.innerText = this.response.message;
+        window.location.href = "index";
     } else {
         console.log(this.response.success)
-      //  message.innerText = this.response.message
+        message.innerText = this.response.message
     }
 }
-
 pay.addEventListener("click", payEmployees)

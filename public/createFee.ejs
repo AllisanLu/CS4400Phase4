@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CS4400</title>
+    <script src="/js/createFee.js" defer></script>
+</head>
+<body onload="updateAccounts();">
+    <h1>New Fee</h1>
+    <form>
+        <!-- drop downs :D -->
+        <div>
+            <label for="bank"></label>
+            <select id="bank">
+                <% for (const i in banks) { %>
+                    <option value="<%= banks[i].bankID %>"> <%= banks[i].bankID %> </option>
+                <% } %>
+            </select>
+        <div>
+            <label for="account"></label>
+            <select id="account">
+                <% for (const i in accounts) { %>
+                    <option value="<%= accounts[i].accountID %>"> <%= accounts[i].accountID %> </option>
+                <% } %>
+            </select>
+        </div>
+        <div>
+            <label for="type"></label>
+            <input id="type" />
+        </div>
+
+        <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/adminMenu'" />
+        <input type="submit" value="Confirm" id="create"> 
+    </form>
+    <p hidden id="message"></p>
+</body>
+</html>

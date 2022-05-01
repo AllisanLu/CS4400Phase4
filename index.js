@@ -3,6 +3,8 @@ const { json } = require("express/lib/response");
 const mysql = require("mysql2")
 let authenticated = false;
 
+let user = "";
+
 const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -31,6 +33,7 @@ app.use(express.urlencoded({ extended: false }));
  * If the user was sucessfully authenticated, check whether user is an admin
  */
 app.post("/attempt_login", function (req, res) {
+    authenticated = false;
     // we check for the username and password to match.
     connection.query("select pwd from person where perID = ?", [req.body.username], function (err, rows) {
         if (err || rows.length <= 0) {
@@ -48,11 +51,18 @@ app.post("/attempt_login", function (req, res) {
         //checking to see if admin
         if (authenticated) {
             connection.query("select perID from system_admin where perID = ?", [req.body.username], function (err, rows) {
-                if (!err) {
+                if (!err && rows.length > 0) {
                    // res.redirect("/adminMenu")
                     res.json({ success: true, message: "admin" })
                 } else {
-                    res.json({ success: true, message: "logged in" })
+                    connection.query("select perID from customer where perID = ?", [req.body.username], function (err, rows) {
+                        if (!err) {
+                            user = rows[0].perID
+                            res.json({ success: true, message: "customer" })
+                        } else {
+                            res.json({ success: true, message: "logged in" })
+                        }
+                    })
                 }
             })
         }
@@ -67,6 +77,52 @@ app.get("/adminMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "Admin.html");
 })
 
+app.get("/customerMenu", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "customerMenu.html");
+})
+
+
+/**
+ * Create Fee
+ */
+app.get("/createFee", function (req, res) {
+    let call = 'select bankID from bank'
+    let call2 = 'select bankID, accountID from bank_account'
+    connection.query(call, [], function (err, result1) {
+        // AHHHH gotta make it like async????
+        //or I can make a 2d array or map or something
+        connection.query(call2, [], function (err, result2) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                res.render(__dirname + "/public/" + "createFee.ejs", { banks: result1, accounts: result2 })
+            }
+        })
+    })
+}).post("/getAccounts", function (req, res) {
+    let call = 'select accountID from interest_bearing where bankID = ?'
+    connection.query(call, [req.body.bankID], function (err, result) {
+        if (err) {
+            res.json({ success: false, message: "" })
+        } else {
+            res.json({ success: true, result: result })
+        }
+    });
+}).post("/addFee", function (req, res) {
+    console.log("adding fee");
+    let call = 'call create_fee(?, ?, ?)';
+    connection.query(call, [req.body.bank, req.body.account, req.body.type], function (err, rows) {
+        if (err) {
+            console.log(err)
+            res.json({ success: false, message: "Could not create fee" })
+            console.log("could not add fee")
+        } else {
+            res.json({ success: true, message: "added fee" })
+            console.log("added fee")
+        }
+    });
+});
+
 
 /**
  * Create Corporation
@@ -76,9 +132,7 @@ app.get("/adminMenu", function (req, res) {
  */
 app.get("/createCorporation", function (req, res) {
     res.sendFile(__dirname + "/public/" + "createCorporation.html");
-})
-
-app.post("/addCorporation", function (req, res) {
+}).post("/addCorporation", function (req, res) {
     console.log("adding corporation");
     let call = 'call create_corporation(?, ?, ?, ?)'
     connection.query(call, [req.body.cid, req.body.shortname, req.body.longname, req.body.reserved], function (err, rows) {
@@ -107,9 +161,7 @@ app.get("/createBank", function (req, res) {
             }
         })
     })
-});
-
-app.post("/addBank", function (req, res) {
+}).post("/addBank", function (req, res) {
     console.log("adding bank");
     let call = 'call create_bank(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     connection.query(call, [req.body.bid, req.body.name, req.body.street, req.body.city,
@@ -120,14 +172,14 @@ app.post("/addBank", function (req, res) {
     });
 });
 
+
+
 /**
  * Pay Employees
  */
 app.get("/payEmployees", function (req, res) {
     res.sendFile(__dirname + "/public/" + "payEmployees.html");
-})
-
-app.post("/payAllEmployees", function (req, res) {
+}).post("/payAllEmployees", function (req, res) {
     console.log("paying all employees");
     let call = 'call pay_employees()';
     connection.query(call, [], function (err, rows) {
@@ -226,5 +278,3 @@ app.post("/displayEmployeeStats", function (req, res) {
 app.listen(3000, function () {
     console.log("Listening on port 3000...");
 });
-
-[]
