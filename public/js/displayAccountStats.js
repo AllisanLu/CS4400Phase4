@@ -69,5 +69,4 @@ function responseHandler() {
 
 window.onload = function() {
     createTable();
-    alert('test');
 }

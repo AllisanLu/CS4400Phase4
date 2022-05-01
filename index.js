@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "",
+    password: "Wahaha!!",
     database: "bank_management"
 });
 
@@ -204,21 +204,18 @@ app.get("/payEmployees", function (req, res) {
 
 
 /**
- * View Account Stats
+ * Display Account Stats
  */
-app.get("/viewAccountStats", function (req, res) {
-    res.sendFile(_dirname + "/public/" + "viewAccountStats.html")
-})
-
-app.post("/displayAccountStats", function (req, res) {
-    console.log("viewing account stats");
-    let call = 'call display_account_stats()';
-    connection.query(call, [], function (err, rows) {
+ app.get("/displayAccountStats", function (req, res) {
+    let call = 'select * from display_account_stats';
+    connection.query(call, function(err, results) {
         if (err) {
-            res.json({success: false, message: "Could not view account stats"})
+            res.json({ success: false, message: "Could not display account stats" })
+        } else {
+            res.render(__dirname + "/public/" + "displayAccountStats.ejs", { accountStats: results })
         }
-    });
-})
+    })
+});
 
 /**
  * View Bank Stats
@@ -292,16 +289,4 @@ app.listen(3000, function () {
     console.log("Listening on port 3000...");
 });
 
-/**
- * Display Account Stats
- */
-app.get("/displayAccountStats", function (req, res) {
-    let call = 'select * from display_account_stats';
-    connection.query(call, function(err, results) {
-        if (err) {
-            res.json({ success: false, message: "Could not display account stats" })
-        } else {
-            res.render(__dirname + "/public/" + "displayAccountStats.ejs", { accountStats: results })
-        }
-    })
-});
+
