@@ -3,10 +3,13 @@ const { json } = require("express/lib/response");
 const mysql = require("mysql2")
 let authenticated = false;
 
+let user = "";
+
 const connection = mysql.createConnection({
     host: "localhost",
+    port: 3306,
     user: "root",
-    password: "Wahaha!!",
+    password: "",
     database: "bank_management"
 });
 
@@ -30,6 +33,7 @@ app.use(express.urlencoded({ extended: false }));
  * If the user was sucessfully authenticated, check whether user is an admin
  */
 app.post("/attempt_login", function (req, res) {
+    authenticated = false;
     // we check for the username and password to match.
     connection.query("select pwd from person where perID = ?", [req.body.username], function (err, rows) {
         if (err || rows.length <= 0) {
@@ -47,11 +51,18 @@ app.post("/attempt_login", function (req, res) {
         //checking to see if admin
         if (authenticated) {
             connection.query("select perID from system_admin where perID = ?", [req.body.username], function (err, rows) {
-                if (!err) {
+                if (!err && rows.length > 0) {
                    // res.redirect("/adminMenu")
                     res.json({ success: true, message: "admin" })
                 } else {
-                    res.json({ success: true, message: "logged in" })
+                    connection.query("select perID from customer where perID = ?", [req.body.username], function (err, rows) {
+                        if (!err) {
+                            user = rows[0].perID
+                            res.json({ success: true, message: "customer" })
+                        } else {
+                            res.json({ success: true, message: "logged in" })
+                        }
+                    })
                 }
             })
         }
@@ -65,6 +76,11 @@ app.post("/attempt_login", function (req, res) {
 app.get("/adminMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "Admin.html");
 })
+
+app.get("/customerMenu", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "customerMenu.html");
+})
+
 
 /**
  * View stats screen
@@ -184,6 +200,92 @@ app.get("/payEmployees", function (req, res) {
             res.json({ sucess: true, message: "Employees paid" })
         }
     })
+})
+
+
+/**
+ * View Account Stats
+ */
+app.get("/viewAccountStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewAccountStats.html")
+})
+
+app.post("/displayAccountStats", function (req, res) {
+    console.log("viewing account stats");
+    let call = 'call display_account_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view account stats"})
+        }
+    });
+})
+
+/**
+ * View Bank Stats
+ */
+ app.get("/viewBankStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewBankStats.html")
+})
+
+app.post("/displayBankStats", function (req, res) {
+    console.log("viewing account stats");
+    let call = 'call display_bank_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view bank stats"})
+        }
+    });
+})
+
+/**
+ * View Corporation Stats
+ */
+ app.get("/viewCorporationStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewCorporationStats.html")
+})
+
+app.post("/displayCorporationStats", function (req, res) {
+    console.log("viewing corporation stats");
+    let call = 'call display_corporation_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view corporation stats"})
+        }
+    });
+})
+
+/**
+ * View Customer Stats
+ */
+ app.get("/viewCustomerStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewCustomerStats.html")
+})
+
+app.post("/displayCustomerStats", function (req, res) {
+    console.log("viewing customer stats");
+    let call = 'call display_customer_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view customer stats"})
+        }
+    });
+})
+
+/**
+ * View Employee Stats
+ */
+ app.get("/viewEmployeeStats", function (req, res) {
+    res.sendFile(_dirname + "/public/" + "viewEmployeeStats.html")
+})
+
+app.post("/displayEmployeeStats", function (req, res) {
+    console.log("viewing employee stats");
+    let call = 'call display_employee_stats()';
+    connection.query(call, [], function (err, rows) {
+        if (err) {
+            res.json({success: false, message: "Could not view account stats"})
+        }
+    });
 })
 
 app.listen(3000, function () {
