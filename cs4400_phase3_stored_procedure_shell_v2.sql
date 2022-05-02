@@ -5,6 +5,8 @@
 
 -- implement these functions and stored procedures on the project database
 use bank_management;
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+
 
 -- [1] create_corporation()
 -- This stored procedure creates a new corporation
