@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CS4400</title>
+    <script src="/js/displayBankStats.js" defer></script>
+</head>
+<body>
+    <h1>Display Bank Stats</h1>
+    <table id="table" align = "center" border="1px"></table>
+    <script>
+        var accountStats = '<%- JSON.stringify(bankStats) %>';
+    </script>
+</body>
+</html>
