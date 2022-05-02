@@ -239,6 +239,38 @@ app.post("/hire", function (req, res) {
 })
 
 /**
+ * Replace Manager
+ */ 
+app.get("/replaceManager", function (req, res) {
+    let call = 'select bankID from bank'
+    let call2 = 'select perID from employee'
+    connection.query(call, [], function (err, result1) {
+        connection.query(call2, [], function (err, result2) {
+            if (err) {
+                res.json({ success: false, message: "server error" })
+            } else {
+                res.render(__dirname + "/public/" + "replaceManager.ejs", { banks: result1, perIDs: result2 })
+            }
+        })
+    })
+})
+app.post("/replace", function (req, res) {
+    let call = 'call replace_manager(?, ?, ?)';
+    connection.query(call, [req.body.pid, req.body.bank, req.body.salary],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not replace manager" })
+                console.log("Could not replace manager")
+            } else {
+                res.json({ success: true, message: "Replaced Manager", admin: admin })
+                console.log("replaced manager")
+            }
+        }
+    );
+})
+
+/**
  * View stats screen
  * Sends viewStats.html displaying all possible stats to view to the admin
  */
