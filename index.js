@@ -303,6 +303,26 @@ app.get("/createBank", function (req, res) {
     });
 });
 
+/**
+ * Start Overdraft
+ * Sends createCorporation.html which allows admin/accessor to input:
+ * checkingBankID, checkingID, savingsBankID, and savingsID
+ * and calls the startOverdraft procedure with the values inputted
+ */
+app.get("/startOverdraft", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "startOverdraft.html");
+}).post("/startOverdraft", function (req, res) {
+    console.log("Starting Overdraft");
+    let call = 'call start_overdraft(?, ?, ?, ?, ?)'
+    connection.query(call, [req.body.cid, req.body.shortname, req.body.longname, req.body.reserved], function (err, results) {
+        if (err) {
+            res.json({ success: false, message: "Could not create corporation" })
+        } else {
+            res.json({ success: true, message: "Created corporation" })
+        }
+    });
+})
+
 /*
  * Manager Menu
  */
