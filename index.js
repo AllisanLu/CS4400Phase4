@@ -60,15 +60,16 @@ app.post("/attempt_login", function (req, res) {
         if (authenticated) {
             connection.query("select perID from system_admin where perID = ?", [req.body.username], function (err, rows) {
                 if (!err && rows.length > 0) {
-                    // res.redirect("/adminMenu")
                     admin = true;
                     res.json({ success: true, message: "admin" })
                 } else {
-                    connection.query("select perID from customer where perID = ?", [req.body.username], function (err, rows) {
+                    //check to see if manager
+                    connection.query("select manager from bank where manager = ?", [req.body.username], function (err, rows) {
                         if (!err) {
-                            res.json({ success: true, message: "customer" })
+                            manager = true;
+                            res.json({ success: true, message: "manager" })
                         } else {
-                            res.json({ success: true, message: "logged in" })
+                            res.json({ success: true, message: "customer" })
                         }
                     })
                 }

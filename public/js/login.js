@@ -28,8 +28,10 @@ function responseHandler() {
         if (this.response.message == "admin") {
             window.location.href = "adminMenu";
         }
-        else if (this.response.message == "customer") {
-            window.location.href = "customerMenu";
+        else if (this.response.message == "manager") {
+            window.location.href = "managerMenu";
+        } else {
+            window.location.href = "customer";
         }
     } else {
         console.log(this.response.success)
