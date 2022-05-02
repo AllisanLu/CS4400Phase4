@@ -450,13 +450,28 @@ app.get("/createBank", function (req, res) {
 });
 
 /**
- * Start Overdraft
- * Sends startOverdraft.html which allows admin/accessor to input:
+ * Manage Overdraft
+ * Sends manageOverdraft.ejs which allows admin/accessor to select:
  * checking_bankID, checking_accountID, savings_bankID, and savings_accountID
- * and calls the startOverdraft procedure with the values inputted
+ * and calls the manageOverdraft procedure with the values selected
  */
-app.get("/startOverdraft", function (req, res) {
-    res.sendFile(__dirname + "/public/" + "startOverdraft.html");
+app.get("/manageOverdraft", function (req, res) {
+    if (admin) {
+        let call1 = 'select accountID from checking'
+        let call2 = 'select accountID from savings
+    } else { 
+        let call1 = 'select accountID from checking where accountID in (select accountID from access where perID=?)'
+        let call2 = 'select accountID from savings where accountID in (select accountID from access where perID=?)'
+    }
+    connection.query(call1, [], function (err, result1) {
+        connection.query(call2, [], function (err, result2) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                res.render(__dirname + "/public/" + "manageOverdraft.ejs", {checkingID: result1, savingsID: result2 })
+            }
+        })
+    })
 }).post("/startOverdraft", function (req, res) {
     console.log("Starting Overdraft");
     let call = 'call start_overdraft(?, ?, ?, ?, ?)'
