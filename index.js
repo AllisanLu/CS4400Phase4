@@ -52,7 +52,7 @@ app.post("/attempt_login", function (req, res) {
         if (authenticated) {
             connection.query("select perID from system_admin where perID = ?", [req.body.username], function (err, rows) {
                 if (!err && rows.length > 0) {
-                   // res.redirect("/adminMenu")
+                    // res.redirect("/adminMenu")
                     res.json({ success: true, message: "admin" })
                 } else {
                     connection.query("select perID from customer where perID = ?", [req.body.username], function (err, rows) {
@@ -86,20 +86,117 @@ app.get("/customerMenu", function (req, res) {
 })
 
 /**
- *  Customer Role stuff (employee -> customer)
+ *  Customer/Employee Role stuff
  */
+app.get("/createEmployeeRole", function (req, res) {
+    let call = 'select perID from customer'
+    connection.query(call, [], function (err, result) {
+        if (err) {
+            res.json({ success: false, message: "could not load page" })
+        } else {
+            res.render(__dirname + "/public/" + "createEmployeeRole.ejs", { perIDs: result });
+        }
+    })
+})
+
 app.get("/createCustomerRole", function (req, res) {
+    let call = 'select perID from employee'
+    connection.query(call, [], function (err, result) {
+        if (err) {
+            res.json({ success: false, message: "could not load page" })
+        } else {
+            res.render(__dirname + "/public/" + "createCustomerRole.ejs", { perIDs: result });
+        }
+    })
+})
+
+app.post("/addEmployeeRoleFromCustomer", function (req, res) {
+    console.log("adding employee")
+    let call = 'call start_employee_role(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    connection.query(call, [req.body.pid, null, null, null, null, null, null, null, null, null, null, null, req.body.salary, req.body.payments, req.body.earned],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not add employee" })
+                console.log("could not add employee")
+            } else {
+                res.json({ success: true, message: "added employee" })
+                console.log("added employee")
+            }
+        }
+    );
+})
+
+app.post("/addCustomerRoleFromEmployee", function (req, res) {
+    let call = 'call start_customer_role(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    connection.query(call, [req.body.pid, null, null, null, null, null, null, null, null, null, null],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not add customer" })
+                console.log("could not add customer")
+            } else {
+                res.json({ success: true, message: "added customer" })
+                console.log("added customer")
+            }
+        }
+    );
+})
+
+app.get("/removeCustomerRole", function (req, res) {
+    let call = 'select perID from customer'
+    connection.query(call, [], function (err, result) {
+        if (err) {
+            res.json({ success: false, message: "" })
+        } else {
+            res.render(__dirname + "/public/" + "stopCustomerRole.ejs", { perIDs: result });
+        }
+    })
+})
+
+app.post("/stopCustomer", function (req, res) {
+    let call = 'call stop_customer_role(?)';
+    connection.query(call, [req.body.pid],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not remove role" })
+                console.log("Could not remove role")
+            } else {
+                res.json({ success: true, message: "removed role" })
+                console.log("removed role")
+            }
+        }
+    );
+})
+
+app.get("/removeEmployeeRole", function (req, res) {
     let call = 'select perID from employee'
     connection.query(call, [], function (err, result) {
         if (err) {
             res.json({ success: false, message: "" })
         } else {
-            res.render(__dirname + "/public/" + "customerMenu.html", { perIDs: result });
+            res.render(__dirname + "/public/" + "stopEmployeeRole.ejs", { perIDs: result });
         }
     })
 })
 
-app.post("/")
+app.post("/stopEmployee", function (req, res) {
+    let call = 'call stop_employee_role(?)';
+    connection.query(call, [req.body.pid],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not remove role" })
+                console.log("Could not remove role")
+            } else {
+                res.json({ success: true, message: "removed role" })
+                console.log("removed role")
+            }
+        }
+    );
+})
+
 
 
 
@@ -183,7 +280,7 @@ app.get("/createCorporation", function (req, res) {
 app.get("/createBank", function (req, res) {
     let call = 'select corpID from corporation'
     let call2 = 'select perID from employee where perID not in (select manager from bank)'
-    connection.query(call, [], function(err, result1) {
+    connection.query(call, [], function (err, result1) {
         connection.query(call2, [], function (err, result2) {
             if (err) {
                 res.json({ success: false, message: "" })
@@ -196,7 +293,7 @@ app.get("/createBank", function (req, res) {
     console.log("adding bank");
     let call = 'call create_bank(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     connection.query(call, [req.body.bid, req.body.name, req.body.street, req.body.city,
-                            req.body.state, req.body.zip, req.body.reserved, req.body.cid, req.body.manager, req.body.employee], function (err, rows) {
+    req.body.state, req.body.zip, req.body.reserved, req.body.cid, req.body.manager, req.body.employee], function (err, rows) {
         if (err) {
             res.json({ success: false, message: "Could not create bank" })
         } else {
@@ -233,9 +330,9 @@ app.get("/payEmployees", function (req, res) {
 /**
  * Display Account Stats
  */
- app.get("/displayAccountStats", function (req, res) {
+app.get("/displayAccountStats", function (req, res) {
     let call = 'select * from display_account_stats';
-    connection.query(call, function(err, results) {
+    connection.query(call, function (err, results) {
         if (err) {
             res.json({ success: false, message: "Could not display account stats" })
         } else {
@@ -255,6 +352,7 @@ app.get("/displayBankStats", function (req, res) {
             res.json({success: false, message: "Could not view bank stats"})
         } else {
             res.render(__dirname + "/public/" + "displayBankStats.ejs", { bankStats: results})
+
         }
     })
 });

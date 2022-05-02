@@ -2,10 +2,10 @@
 <html>
 <head>
     <title>CS4400</title>
-    <script src="/js/createCustomerRole.js" defer></script>
+    <script src="/js/stopCustomerRole.js" defer></script>
 </head>
 <body>
-    <h1>Add Customer Role for Existing Employee</h1>
+    <h1>Stop Customer Role</h1>
     <form>
         <div>
             <label for="pid"></label>
@@ -16,20 +16,8 @@
             </select>
         </div>
         <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/manageUsers'" />
-        <input type="submit" value="Add Customer Role" id="create"> 
+        <input type="submit" value="Stop Customer Role" id="create"> 
     </form>
     <p hidden id="message"></p>
 </body>
 </html>
-
-<!--in ip_perID varchar(100), 
-    in ip_taxID char(11),
-    in ip_firstName varchar(100), 
-    in ip_lastName varchar(100), 
-    in ip_birthdate date,
-    in ip_street varchar(100), 
-    in ip_city varchar(100), 
-    in ip_state char(2),
-    in ip_zip char(5), 
-    in ip_dtJoined date, 
-    in cust_password varchar(100)) -->

@@ -1,16 +1,20 @@
 let registerButton = document.getElementById("create")
 let pid = document.getElementById("pid")
+let salary = document.getElementById("salary")
+let payments = document.getElementById("num_payments")
+let earnings = document.getElementById("earnings")
 
-function addCustomer(event) {
+console.log("pls")
+function addEmployee(event) {
     event.preventDefault()
     let xhr = new XMLHttpRequest
     xhr.addEventListener("load", responseHandler)
-    query = `pid=${pid.value}`
+    query = `pid=${pid.value}&salary=${salary.value}&payments=${payments}&earned=${earnings}`
     //console.log(query)
     // when submitting a GET request, the query string is appended to URL
     // but in a POST request, do not attach the query string to the url
     // instead pass it as a parameter in xhr.send()
-    url = `/addCustomerRoleFromEmployee`
+    url = `/addEmployeeRoleFromCustomer`
     xhr.responseType = "json";
     xhr.open("POST", url)
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -30,4 +34,4 @@ function responseHandler() {
         message.innerText = this.response.message
     }
 }
-registerButton.addEventListener("click", addCustomer)
+registerButton.addEventListener("click", addEmployee)
