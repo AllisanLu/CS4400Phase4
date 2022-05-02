@@ -43,6 +43,7 @@ app.post("/attempt_login", function (req, res) {
             storedPassword = rows[0].pwd // rows is an array of objects e.g.: [ { password: '12345' } ]
             // bcrypt.compareSync let's us compare the plaintext password to the hashed password we stored in our database
             if (req.body.password === storedPassword) {
+                user = rows[0].perID
                 authenticated = true;
             } else {
                 res.json({ success: false, message: "password is incorrect" })
@@ -58,7 +59,6 @@ app.post("/attempt_login", function (req, res) {
                 } else {
                     connection.query("select perID from customer where perID = ?", [req.body.username], function (err, rows) {
                         if (!err) {
-                            user = rows[0].perID
                             res.json({ success: true, message: "customer" })
                         } else {
                             res.json({ success: true, message: "logged in" })
