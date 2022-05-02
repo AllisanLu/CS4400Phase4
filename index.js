@@ -266,6 +266,7 @@ app.get("/displayBankStats", function (req, res) {
 app.get("/displayCorporationStats", function (req, res) {
     let call = 'select * from display_corporation_stats';
     connection.query(call, function (err, results) {
+        console.log(err);
         if (err) {
             res.json({success: false, message: "Could not display corporation stats"})
         } else {
