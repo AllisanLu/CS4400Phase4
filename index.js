@@ -2,7 +2,8 @@ const express = require("express");
 const { json } = require("express/lib/response");
 const mysql = require("mysql2")
 let authenticated = false;
-
+let admin = false;
+let manager = false;
 
 let user = "";
 
@@ -10,7 +11,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "astroslime123",
+    password: "Wahaha!!",
     database: "bank_management"
 });
 
@@ -60,6 +61,7 @@ app.post("/attempt_login", function (req, res) {
             connection.query("select perID from system_admin where perID = ?", [req.body.username], function (err, rows) {
                 if (!err && rows.length > 0) {
                     // res.redirect("/adminMenu")
+                    admin = true;
                     res.json({ success: true, message: "admin" })
                 } else {
                     connection.query("select perID from customer where perID = ?", [req.body.username], function (err, rows) {
@@ -203,8 +205,37 @@ app.post("/stopEmployee", function (req, res) {
     );
 })
 
-
-
+/*
+ * Hire worker
+ */
+app.get("/hireWorker", function (req, res) {
+    let call = 'select bankID from bank'
+    let call2 = 'select perID from employee'
+    connection.query(call, [], function (err, result1) {
+        connection.query(call2, [], function (err, result2) {
+            if (err) {
+                res.json({ success: false, message: "server error" })
+            } else {
+                res.render(__dirname + "/public/" + "hireWorker.ejs", { banks: result1, perIDs: result2 })
+            }
+        })
+    })
+})
+app.post("/hire", function (req, res) {
+    let call = 'call hire_worker(?, ?, ?)';
+    connection.query(call, [req.body.pid, req.body.bank, req.body.salary],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not hire worker" })
+                console.log("Could not hire worker")
+            } else {
+                res.json({ success: true, message: "Hired Worker", admin: admin })
+                console.log("Hired Worker")
+            }
+        }
+    );
+})
 
 /**
  * View stats screen
@@ -221,8 +252,6 @@ app.get("/createFee", function (req, res) {
     let call = 'select bankID from bank'
     let call2 = 'select bankID, accountID from bank_account'
     connection.query(call, [], function (err, result1) {
-        // AHHHH gotta make it like async????
-        //or I can make a 2d array or map or something
         connection.query(call2, [], function (err, result2) {
             if (err) {
                 res.json({ success: false, message: "" })
@@ -323,7 +352,7 @@ app.get("/startOverdraft", function (req, res) {
         if (err) {
             res.json({ success: false, message: "Could not link accounts" })
         } else {
-            res.json({ success: true, message: "Started Overdraft Protection" })
+            res.json({ success: true, message: "Started Overdraft Protection", admin: admin })
         }
     });
 })
