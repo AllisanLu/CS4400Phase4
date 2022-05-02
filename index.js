@@ -303,6 +303,26 @@ app.get("/createBank", function (req, res) {
     });
 });
 
+/**
+ * Start Overdraft
+ * Sends startOverdraft.html which allows admin/accessor to input:
+ * checking_bankID, checking_accountID, savings_bankID, and savings_accountID
+ * and calls the startOverdraft procedure with the values inputted
+ */
+app.get("/startOverdraft", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "startOverdraft.html");
+}).post("/startOverdraft", function (req, res) {
+    console.log("Starting Overdraft");
+    let call = 'call start_overdraft(?, ?, ?, ?, ?)'
+    connection.query(call, [user, req.body.checking_bankID, req.body.checking_accountID, req.body.savings_bankID, req.body.savings_accountID], function (err, results) {
+        if (err) {
+            res.json({ success: false, message: "Could not link accounts" })
+        } else {
+            res.json({ success: true, message: "Started Overdraft Protection" })
+        }
+    });
+})
+
 /*
  * Manager Menu
  */
