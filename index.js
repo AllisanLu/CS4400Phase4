@@ -3,6 +3,7 @@ const { json } = require("express/lib/response");
 const mysql = require("mysql2")
 let authenticated = false;
 
+
 let user = "";
 
 const connection = mysql.createConnection({
