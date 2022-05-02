@@ -33,6 +33,11 @@ app.use(express.urlencoded({ extended: false }));
  * Sees if entered user exists then if they exist, check the password, autheticating the user
  * If the user was sucessfully authenticated, check whether user is an admin
  */
+app.get("/logout", function (req, res) {
+    authenticated = false;
+    user = "";
+})
+
 app.post("/attempt_login", function (req, res) {
     authenticated = false;
     // we check for the username and password to match.
