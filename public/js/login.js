@@ -31,7 +31,7 @@ function responseHandler() {
         else if (this.response.message == "manager") {
             window.location.href = "managerMenu";
         } else {
-            window.location.href = "customer";
+            window.location.href = "customerMenu";
         }
     } else {
         console.log(this.response.success)

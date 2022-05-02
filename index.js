@@ -65,7 +65,7 @@ app.post("/attempt_login", function (req, res) {
                 } else {
                     //check to see if manager
                     connection.query("select manager from bank where manager = ?", [req.body.username], function (err, rows) {
-                        if (!err) {
+                        if (!err && rows.length > 0) {
                             manager = true;
                             res.json({ success: true, message: "manager" })
                         } else {
@@ -265,6 +265,85 @@ app.post("/replace", function (req, res) {
             } else {
                 res.json({ success: true, message: "Replaced Manager", admin: admin })
                 console.log("replaced manager")
+            }
+        }
+    );
+})
+
+/*
+ * Deposit and withdraw
+ */
+app.get("/depositPage", function (req, res) {
+    let call = 'select bankID from bank'
+    let call2 = 'select bankID, accountID from bank_account'
+    connection.query(call, [], function (err, result1) {
+        connection.query(call2, [], function (err, result2) {
+            if (err) {
+                res.json({ success: false, message: "server error" })
+            } else {
+                res.render(__dirname + "/public/" + "deposit.ejs", { banks: result1, accounts: result2 })
+            }
+        })
+    })
+}).post("/getAccounts", function (req, res) {
+    let call = 'select accountID from interest_bearing where bankID = ?'
+    connection.query(call, [req.body.bankID], function (err, result) {
+        if (err) {
+            res.json({ success: false, message: "" })
+        } else {
+            res.json({ success: true, result: result })
+        }
+    });
+})
+app.post("/deposit", function (req, res) {
+    let call = 'call account_deposit(?, ?, ?, ?, ?)';
+    connection.query(call, [user, req.body.amount, req.body.bank, req.body.account, null],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not deposit" })
+                console.log("Could not deposit")
+            } else {
+                res.json({ success: true, message: "Deposited" })
+                console.log("Deposited")
+            }
+        }
+    );
+})
+
+app.get("/withdrawPage", function (req, res) {
+    let call = 'select bankID from bank'
+    let call2 = 'select bankID, accountID from bank_account'
+    connection.query(call, [], function (err, result1) {
+        connection.query(call2, [], function (err, result2) {
+            if (err) {
+                res.json({ success: false, message: "server error" })
+            } else {
+                res.render(__dirname + "/public/" + "withdrawl.ejs", { banks: result1, accounts: result2 })
+            }
+        })
+    })
+}).post("/getAccounts", function (req, res) {
+    let call = 'select accountID from interest_bearing where bankID = ?'
+    connection.query(call, [req.body.bankID], function (err, result) {
+        if (err) {
+            res.json({ success: false, message: "" })
+        } else {
+            res.json({ success: true, result: result })
+        }
+    });
+})
+app.post("/withdraw", function (req, res) {
+    let call = 'call account_withdrawl(?, ?, ?, ?, ?)';
+    connection.query(call, [user, req.body.amount, req.body.bank, req.body.account, null],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not withdraw" })
+                console.log("Could not withdraw")
+            } else {
+                res.json({ success: true, message: "Withdrawled" })
+                console.log("withdrawled")
             }
         }
     );
