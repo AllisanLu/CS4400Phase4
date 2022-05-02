@@ -305,8 +305,8 @@ app.get("/createBank", function (req, res) {
 
 /**
  * Start Overdraft
- * Sends createCorporation.html which allows admin/accessor to input:
- * checkingBankID, checkingID, savingsBankID, and savingsID
+ * Sends startOverdraft.html which allows admin/accessor to input:
+ * checking_bankID, checking_accountID, savings_bankID, and savings_accountID
  * and calls the startOverdraft procedure with the values inputted
  */
 app.get("/startOverdraft", function (req, res) {
@@ -314,11 +314,11 @@ app.get("/startOverdraft", function (req, res) {
 }).post("/startOverdraft", function (req, res) {
     console.log("Starting Overdraft");
     let call = 'call start_overdraft(?, ?, ?, ?, ?)'
-    connection.query(call, [req.body.cid, req.body.shortname, req.body.longname, req.body.reserved], function (err, results) {
+    connection.query(call, [user, req.body.checking_bankID, req.body.checking_accountID, req.body.savings_bankID, req.body.savings_accountID], function (err, results) {
         if (err) {
-            res.json({ success: false, message: "Could not create corporation" })
+            res.json({ success: false, message: "Could not link accounts" })
         } else {
-            res.json({ success: true, message: "Created corporation" })
+            res.json({ success: true, message: "Started Overdraft Protection" })
         }
     });
 })
