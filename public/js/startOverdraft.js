@@ -8,7 +8,7 @@ function startOverdraft(event) {
     xhr.addEventListener("load", responseHandler)
     //No idea what to put here for this query
     //dont even know what any of this does
-    query = `pid=${pid.value}`
+    query = `checkingAccount=${checkingAccount.value}&savingAccount=${savingAccount.value}`
     
     //console.log(query)
     // when submitting a GET request, the query string is appended to URL
@@ -18,6 +18,7 @@ function startOverdraft(event) {
     url = `/startingOverdraft`
     xhr.responseType = "json";
     xhr.open("POST", url)
+    
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     // notice the query string is passed as a parameter in xhr.send()
     // this is to prevent the data from being easily sniffed
@@ -35,4 +36,4 @@ function responseHandler() {
         message.innerText = this.response.message
     }
 }
-registerButton.addEventListener("click", startOverdraft)
+connector.addEventListener("click", startOverdraft)
