@@ -1,18 +1,19 @@
-let registerButton = document.getElementById("create")
-let bank = document.getElementById("bank")
+let registerButton = document.getElementById("add")
+let removeButton = document.getElementById("remove")
+let pID = document.getElementById("customer")
 let account = document.getElementById("account")
-let type = document.getElementById("type")
+let bank = document.getElementById("bank")
 
-function createFee(event) {
+function add(event) {
     //event.preventDefault()
     let xhr = new XMLHttpRequest
     xhr.addEventListener("load", responseHandler)
-    query = `bank=${bank.value}&account=${account.value}&type=${type.value}`
+    query = `pid=${bank.value}&account=${account.value}&bank=${bank.value}`
     //console.log(query)
     // when submitting a GET request, the query string is appended to URL
     // but in a POST request, do not attach the query string to the url
     // instead pass it as a parameter in xhr.send()
-    url = `/addFee`
+    url = `/addAccountAccess`
     xhr.responseType = "json";
     xhr.open("POST", url)
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -21,16 +22,22 @@ function createFee(event) {
     xhr.send(query)
 }
 
-function responseHandler() {
-    let message = document.getElementById("message")
-    message.style.display = "block"
-    if (this.response.success) {
-        message.innerText = this.response.message;
-        window.location.href = "adminMenu";
-    } else {
-        console.log(this.response.success)
-        message.innerText = this.response.message
-    }
+function remove(event) {
+    //event.preventDefault()
+    let xhr = new XMLHttpRequest
+    xhr.addEventListener("load", responseHandler)
+    query = `pid=${bank.value}&account=${account.value}&bankID=${bank.value}`
+    //console.log(query)
+    // when submitting a GET request, the query string is appended to URL
+    // but in a POST request, do not attach the query string to the url
+    // instead pass it as a parameter in xhr.send()
+    url = `/removeAccountAccess`
+    xhr.responseType = "json";
+    xhr.open("POST", url)
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+    // notice the query string is passed as a parameter in xhr.send()
+    // this is to prevent the data from being easily sniffed
+    xhr.send(query)
 }
 
 function updateAccounts(event) {
@@ -53,7 +60,7 @@ function updateAccounts(event) {
         }
     })
     query = `bankID=${bank.value}`
-    url = `/getAccounts`
+    url = `/getCustomerAccounts`
     xhr.responseType = "json";
     xhr.open("POST", url)
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -62,5 +69,20 @@ function updateAccounts(event) {
     xhr.send(query)
 }
 
-registerButton.addEventListener("click", createFee)
-bank.addEventListener("change", updateAccounts) 
+
+
+function responseHandler() {
+    let message = document.getElementById("message")
+    message.style.display = "block"
+    if (this.response.success) {
+        message.innerText = this.response.message;
+        //window.location.href = "index";
+    } else {
+        console.log(this.response.success)
+        message.innerText = this.response.message
+    }
+}
+
+registerButton.addEventListener("click", add)
+removeButton.addEventListener("click", remove)
+bank.addEventListener("change", updateAccounts)

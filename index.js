@@ -36,7 +36,10 @@ app.use(express.urlencoded({ extended: false }));
  */
 app.get("/logout", function (req, res) {
     authenticated = false;
+    admin = false;
+    manager = false;
     user = "";
+    res.sendFile(__dirname + "/public/" + "index.html");
 })
 
 app.post("/attempt_login", function (req, res) {
@@ -49,8 +52,7 @@ app.post("/attempt_login", function (req, res) {
             storedPassword = rows[0].pwd // rows is an array of objects e.g.: [ { password: '12345' } ]
             // bcrypt.compareSync let's us compare the plaintext password to the hashed password we stored in our database
             if (req.body.password === storedPassword) {
-                user = rows[0].perID
-                console.log(user)
+                user = req.body.username
                 authenticated = true;
             } else {
                 res.json({ success: false, message: "password is incorrect" })
@@ -241,7 +243,7 @@ app.post("/hire", function (req, res) {
 
 /**
  * Replace Manager
- */ 
+ */
 app.get("/replaceManager", function (req, res) {
     let call = 'select bankID from bank'
     let call2 = 'select perID from employee'
@@ -287,7 +289,7 @@ app.get("/depositPage", function (req, res) {
         })
     })
 }).post("/getAccounts", function (req, res) {
-    let call = 'select accountID from interest_bearing where bankID = ?'
+    let call = 'select accountID from bank_account where bankID = ?'
     connection.query(call, [req.body.bankID], function (err, result) {
         if (err) {
             res.json({ success: false, message: "" })
@@ -444,8 +446,10 @@ app.get("/createBank", function (req, res) {
     req.body.state, req.body.zip, req.body.reserved, req.body.cid, req.body.manager, req.body.employee], function (err, rows) {
         if (err) {
             res.json({ success: false, message: "Could not create bank" })
+            console.log("could not create bank")
         } else {
             res.json({ success: true, message: "Created bank" })
+            console.log("created bank")
         }
     });
 });
@@ -460,7 +464,7 @@ app.get("/manageOverdraft", function (req, res) {
     if (admin) {
         let call1 = 'select accountID from checking'
         let call2 = 'select accountID from savings'
-    } else { 
+    } else {
         let call1 = 'select accountID from checking where accountID in (select accountID from access where perID=?)'
         let call2 = 'select accountID from savings where accountID in (select accountID from access where perID=?)'
     }
@@ -469,7 +473,7 @@ app.get("/manageOverdraft", function (req, res) {
             if (err) {
                 res.json({ success: false, message: "" })
             } else {
-                res.render(__dirname + "/public/" + "manageOverdraft.ejs", {checkingID: result1, savingsID: result2 })
+                res.render(__dirname + "/public/" + "manageOverdraft.ejs", { checkingID: result1, savingsID: result2 })
             }
         })
     })
@@ -660,11 +664,11 @@ app.get("/displayAccountStats", function (req, res) {
 
 app.get("/displayBankStats", function (req, res) {
     let call = 'select * from display_bank_stats';
-    connection.query(call, function(err, results) {
+    connection.query(call, function (err, results) {
         if (err) {
-            res.json({success: false, message: "Could not view bank stats"})
+            res.json({ success: false, message: "Could not view bank stats" })
         } else {
-            res.render(__dirname + "/public/" + "displayBankStats.ejs", { bankStats: results})
+            res.render(__dirname + "/public/" + "displayBankStats.ejs", { bankStats: results })
 
         }
     })
@@ -679,9 +683,9 @@ app.get("/displayCorporationStats", function (req, res) {
     connection.query(call, function (err, results) {
         console.log(err);
         if (err) {
-            res.json({success: false, message: "Could not display corporation stats"})
+            res.json({ success: false, message: "Could not display corporation stats" })
         } else {
-            res.render(__dirname + "/public/" + "displayCorporationStats.ejs", { corporationStats: results})
+            res.render(__dirname + "/public/" + "displayCorporationStats.ejs", { corporationStats: results })
         }
     })
 });
@@ -696,9 +700,9 @@ app.get("/displayCustomerStats", function (req, res) {
     let call = 'select * from display_customer_stats';
     connection.query(call, function (err, results) {
         if (err) {
-            res.json({success: false, message: "Could not view customer stats"})
+            res.json({ success: false, message: "Could not view customer stats" })
         } else {
-            res.render(__dirname + "/public/" + "displayCustomerStats.ejs" , { customerStats: results})
+            res.render(__dirname + "/public/" + "displayCustomerStats.ejs", { customerStats: results })
         }
     })
 });
@@ -712,12 +716,107 @@ app.get("/displayEmployeeStats", function (req, res) {
     let call = 'select * from display_employee_stats';
     connection.query(call, function (err, results) {
         if (err) {
-            res.json({success: false, message: "Could not view account stats"})
+            res.json({ success: false, message: "Could not view account stats" })
         } else {
-            res.render(__dirname + "/public/" + "displayEmployeeStats.ejs", { employeeStats: results})
+            res.render(__dirname + "/public/" + "displayEmployeeStats.ejs", { employeeStats: results })
         }
     })
 });
+
+/*
+ * Manage account access stuff
+ */
+app.get("/customerAccountAccess", function (req, res) {
+    let call = 'select accountID from access where perID = ?'
+    if (admin) {
+        call = 'select accountID from access'
+    }
+    let call2 = 'select perID from customer'
+    let call3 = 'select bankID from bank'
+    connection.query(call, [], function (err, result1) {
+        connection.query(call2, [], function (err, result2) {
+            connection.query(call3, [], function (err, result3) {
+                if (err) {
+                    res.json({ success: false, message: "" })
+                } else {
+                    res.render(__dirname + "/public/" + "customerAccountAccess.ejs", { accounts: result1, customers: result2, banks: result3, admin: admin })
+                }
+            })
+        })
+    })
+}).post("/getCustomerAccounts", function (req, res) {
+    let call = 'select accountID from access where bankID = ? and perID = ?'
+    if (admin) {
+        call = 'select accountID from access where bankID = ?'
+    }
+    connection.query(call, [req.body.bankID, user], function (err, result) {
+        if (err) {
+            res.json({ success: false, message: "" })
+        } else {
+            res.json({ success: true, result: result })
+        }
+    });
+})
+
+app.post("/addAccountAccess", function (req, res) {
+    let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
+    connection.query(call, [user, req.body.pid, null, req.body.bank, req.body.account, null, null, null, null, null, null, null], //date
+        function (err, results) {
+            if (err) {
+                res.json({ success: false, message: "Could not add account access" })
+                console.log("could not add account access")
+            } else {
+                res.json({ success: true, message: "Added Account Access", admin: admin })
+                console.log("added account access")
+            }
+        }
+    );
+})
+
+app.post("/removeAccountAccess", function (req, res) {
+    let call = 'call remove_account_access(?, ?, ?, ?)'
+    connection.query(call, [user, req.body.pid, req.body.bankID, req.body.account],
+        function (err, results) {
+            if (err) {
+                res.json({ success: false, message: "Could not remove account access" })
+                console.log("could not remove account access")
+            } else {
+                res.json({ success: true, message: "Removed Account Access", admin: admin })
+                console.log("removed account access")
+            }
+        }
+    );
+});
+
+app.get("/adminAccountAccess", function (req, res) {
+    let call = 'select accountID from access'
+    let call2 = 'select perID from customer'
+    let call3 = 'select bankID from bank'
+    connection.query(call, [], function (err, result1) {
+        connection.query(call2, [], function (err, result2) {
+            connection.query(call3, [], function (err, result3) {
+                if (err) {
+                    res.json({ success: false, message: "" })
+                } else {
+                    res.render(__dirname + "/public/" + "adminAccountAccess.ejs", { accounts: result1, customers: result2, banks: result3})
+                }
+            })
+        })
+    })
+})
+
+app.post("/addAccount", function (req, res) {
+    let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
+    connection.query(call, [user, req.body.pid, req.body.type, req.body.bankID, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, null],
+        function (err, results) {
+            if (err) {
+                res.json({ success: false, message: "Could not add account access" })
+            } else {
+                res.json({ success: true, message: "Added Account Access", admin: admin })
+            }
+        }
+    );
+})
 
 app.listen(3000, function () {
     console.log("Listening on port 3000...");
