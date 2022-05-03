@@ -37,6 +37,7 @@ app.use(express.urlencoded({ extended: false }));
 app.get("/logout", function (req, res) {
     authenticated = false;
     user = "";
+    res.sendFile(__dirname + "/public/" + "index.html");
 })
 
 app.post("/attempt_login", function (req, res) {
@@ -443,8 +444,10 @@ app.get("/createBank", function (req, res) {
     req.body.state, req.body.zip, req.body.reserved, req.body.cid, req.body.manager, req.body.employee], function (err, rows) {
         if (err) {
             res.json({ success: false, message: "Could not create bank" })
+            console.log("could not create bank")
         } else {
             res.json({ success: true, message: "Created bank" })
+            console.log("created bank")
         }
     });
 });
