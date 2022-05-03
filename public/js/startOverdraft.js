@@ -1,7 +1,5 @@
 let connector = document.getElementById("create")
-let checking_bankID = document.getElementById("checking_bankID")
 let checking_accountID = document.getElementById("checking_accountID")
-let savings_bankID = document.getElementById("savings_bankID")
 let savings_accountID = document.getElementById("savings_accountID")
 
 function startOverdraft(event) {
@@ -10,14 +8,14 @@ function startOverdraft(event) {
     xhr.addEventListener("load", responseHandler)
     //No idea what to put here for this query
     //dont even know what any of this does
-    query = `checking_bankID=${checking_bankID.value}&checking_accountID=${checking_accountID.value}&savings_bankID=${savings_bankID.value}&savings_accountID=${savings_accountID.value}`
+    query = `checking_accountID=${checking_accountID.value}&savings_accountID=${savings_accountID.value}`
     
     //console.log(query)
     // when submitting a GET request, the query string is appended to URL
     // but in a POST request, do not attach the query string to the url
     // instead pass it as a parameter in xhr.send()
     
-    url = `/startOverdraft`
+    url = `/manageOverdraft`
     xhr.responseType = "json";
     xhr.open("POST", url)
     
