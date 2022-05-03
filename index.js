@@ -482,8 +482,17 @@ app.get("/manageOverdraft", function (req, res) {
             res.json({ success: true, message: "Started Overdraft Protection", admin: admin })
         }
     });
-})
-
+}).post("/stopOverdraft", function (req, res) {
+    console.log("Stopping Overdraft");
+    let call = 'call stop_overdraft(?, ?, ?)'
+    connection.query(call, [user, req.body.checking_accountID, req.body.savings_accountID], function (err, results) {
+        if (err) {
+            res.json({ success: false, message: "Could not link accounts" })
+        } else {
+            res.json({ success: true, message: "Started Overdraft Protection", admin: admin })
+        }
+    });
+});
 /*
  * Manager Menu
  */
