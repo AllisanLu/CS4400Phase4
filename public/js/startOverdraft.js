@@ -1,4 +1,5 @@
-let connector = document.getElementById("create")
+let startOverdraft = document.getElementById("startOverdraft")
+let stopOverdraft = document.getElementByID("stopOverdraft")
 let checking_accountID = document.getElementById("checking_accountID")
 let savings_accountID = document.getElementById("savings_accountID")
 
@@ -25,6 +26,22 @@ function startOverdraft(event) {
     xhr.send(query)
 }
 
+function stopOverdraft(event) {
+    event.preventDefault()
+    let xhr = new XMLHttpRequest
+    xhr.addEventListener("load", responseHandler)
+    
+    query = `checking_accountID=${checking_accountID.value}&savings_accountID=${savings_accountID.value}`
+    
+    url = `/manageOverdraft`
+    xhr.responseType = "json";
+    xhr.open("POST", url)
+    
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+    
+    xhr.send(query)
+}
+
 function responseHandler() {
     let message = document.getElementById("message")
     message.style.display = "block"
@@ -40,4 +57,5 @@ function responseHandler() {
         message.innerText = this.response.message
     }
 }
-connector.addEventListener("click", startOverdraft)
+startOverdraft.addEventListener("click", startOverdraft)
+stopOverdraft.addEventListener("click", stopOverdraft)
