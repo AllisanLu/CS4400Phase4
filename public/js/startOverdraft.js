@@ -16,7 +16,7 @@ function startOverdraft(event) {
     // but in a POST request, do not attach the query string to the url
     // instead pass it as a parameter in xhr.send()
     
-    url = `/manageOverdraft`
+    url = `/startOverdraft`
     xhr.responseType = "json";
     xhr.open("POST", url)
     
@@ -33,7 +33,7 @@ function stopOverdraft(event) {
     
     query = `checking_accountID=${checking_accountID.value}&savings_accountID=${savings_accountID.value}`
     
-    url = `/manageOverdraft`
+    url = `/stopOverdraft`
     xhr.responseType = "json";
     xhr.open("POST", url)
     
