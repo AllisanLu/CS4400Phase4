@@ -4,6 +4,12 @@ const mysql = require("mysql2")
 let authenticated = false;
 let admin = false;
 let manager = false;
+var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+var yy = today.getFullYear();
+
+today = yy + '-' + mm + '-' + dd;
 
 let user = "";
 
@@ -54,6 +60,8 @@ app.post("/attempt_login", function (req, res) {
             if (req.body.password === storedPassword) {
                 user = req.body.username
                 authenticated = true;
+                console.log(today);
+
             } else {
                 res.json({ success: false, message: "password is incorrect" })
             }
@@ -604,13 +612,13 @@ app.get("/manageOverdraft", function (req, res) {
 }).post("/makeTransfer", function (req, res) {
     console.log("maketransfer");
     let call = 'call account_transfer(?, ?, ?, ?, ?, ?, ?)';
-    connection.query(call, [user, req.body.amount, req.body.bank1, req.body.account1, req.body.bank2, req.body.account2, null], function (err, rows) {
+    connection.query(call, [user, req.body.amount, req.body.bank1, req.body.account1, req.body.bank2, req.body.account2, today], function (err, rows) {
         if (err) {
             console.log(err)
             res.json({ success: false, message: "Could not transfer" })
             console.log("could not transfer")
         } else {
-            console.log("reached3")
+            console.log(call)
 
             res.json({ success: true, message: "Transfer success" })
             console.log("Transfer succeeded")
