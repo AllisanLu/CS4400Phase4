@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CS4400</title>
+    <script src="/js/makeAccountTransfer.js" defer></script>
+</head>
+<body onload="updateAccount1(); updateAccount2();">
+    <h1>From</h1>
+    <form>
+        <!-- drop downs :D -->
+        <div>
+            <label for="bank1"></label>
+            <select id="bank1">
+                <% for (const i in frombanks) { %>
+                    <option value="<%= frombanks[i].bankID %>"> <%= frombanks[i].bankID %> </option>
+                <% } %>
+            </select>
+        <div>
+            <label for="account1"></label>
+            <select id="account1">
+                <% for (const i in fromaccounts) { %>
+                    <option value="<%= fromaccounts[i].accountID %>"> <%= fromaccounts[i].accountID %> </option>
+                <% } %>
+            </select>
+        </div>
+        <div>
+            <label for="amount"></label>
+            <input id="amount" />
+        </div>
+
+        <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/adminMenu'" />
+        <input type="submit" value="Confirm" id="transfer"> 
+    </form>
+    <h2>To</h2>
+    <form>
+        <!-- drop downs :D -->
+        <div>
+            <label for="bank2"></label>
+            <select id="bank2">
+                <% for (const i in tobanks) { %>
+                    <option value="<%= tobanks[i].bid %>"> <%= tobanks[i].bid %> </option>
+                <% } %>
+            </select>
+        <div>
+            <label for="account2"></label>
+            <select id="account2">
+                <% for (const i in toaccounts) { %>
+                    <option value="<%= toaccounts[i].aid %>"> <%= toaccounts[i].aid %> </option>
+                <% } %>
+            </select>
+        </div>
+
+    </form>
+    <p hidden id="message"></p>
+</body>
+</html>

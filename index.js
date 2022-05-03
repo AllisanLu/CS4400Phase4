@@ -10,8 +10,8 @@ let user = "";
 const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
-    user: "root",
-    password: "Wahaha!!",
+    user: "root",   
+    password: "astroslime123",
     database: "bank_management"
 });
 
@@ -50,6 +50,7 @@ app.post("/attempt_login", function (req, res) {
             // bcrypt.compareSync let's us compare the plaintext password to the hashed password we stored in our database
             if (req.body.password === storedPassword) {
                 user = rows[0].perID
+                console.log(user)
                 authenticated = true;
             } else {
                 res.json({ success: false, message: "password is incorrect" })
@@ -458,7 +459,7 @@ app.get("/createBank", function (req, res) {
 app.get("/manageOverdraft", function (req, res) {
     if (admin) {
         let call1 = 'select accountID from checking'
-        let call2 = 'select accountID from savings
+        let call2 = 'select accountID from savings'
     } else { 
         let call1 = 'select accountID from checking where accountID in (select accountID from access where perID=?)'
         let call2 = 'select accountID from savings where accountID in (select accountID from access where perID=?)'
@@ -493,6 +494,126 @@ app.get("/manageOverdraft", function (req, res) {
         }
     });
 });
+
+/**
+ * Transfer funds between accounts
+ */
+ app.get("/makeAccountTransfer", function (req, res) {
+     let call = null
+     let call2 = null
+     let call3 = null
+     let call4 = null
+    if (admin) {
+        call = 'select bankID from bank'
+        call2 = 'select bankID, accountID from bank_account'
+        call3 = 'select bankID as bid from bank'
+        call4 = 'select bankID as bid, accountID as aid from bank_account'
+        connection.query(call, [], function (err, result1) {
+            connection.query(call2, [], function (err, result2) {
+                connection.query(call3, [], function (err, result3) {
+                    connection.query(call4, [], function (err, result4) {
+                        if (err) {
+                            res.json({ success: false, message: "" })
+                        } else {
+                            console.log("reached1")
+                            res.render(__dirname + "/public/" + "makeAccountTransfer.ejs", { frombanks: result1, fromaccounts: result2, tobanks: result3, toaccounts: result4 })
+                        }
+                    })
+                })
+                
+            })
+        })
+    } else { 
+        // let call1 = 'select accountID from checking where accountID in (select accountID from access where perID=?)'
+        // let call2 = 'select accountID from savings where accountID in (select accountID from access where perID=?)'
+        call = 'select bankID from bank where bankID in (select bankID from access where perID=?)'
+        call2 = 'select bankID, accountID from bank_account where accountID in (select accountID from access where perID=?)'
+        call3 = 'select bankID as bid from bank where bankID in (select bankID from access where perID=?)'
+        call4 = 'select bankID as bid, accountID as aid from bank_account where accountID in (select accountID from access where perID=?)'
+        connection.query(call, [user], function (err, result1) {
+            connection.query(call2, [user], function (err, result2) {
+                connection.query(call3, [user], function (err, result3) {
+                    connection.query(call4, [user], function (err, result4) {
+                        if (err) {
+                            res.json({ success: false, message: "" })
+                        } else {
+                            console.log("reached1")
+                            res.render(__dirname + "/public/" + "makeAccountTransfer.ejs", { frombanks: result1, fromaccounts: result2, tobanks: result3, toaccounts: result4 })
+                        }
+                    })
+                })
+                
+            })
+        })
+    }
+
+
+}).post("/getAccount1", function (req, res) {
+    let call = null
+    if (admin) {
+        call = 'select accountID from bank_account where bankID = ?'
+        connection.query(call, [req.body.bankID], function (err, result) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                console.log("reached2")
+                res.json({ success: true, result: result })
+            }
+        });
+    } else {
+        call = 'select accountID from bank_account where bankID = ? and bankID in (select bankID from access where perID=?)'
+        connection.query(call, [req.body.bankID, user], function (err, result) {
+            console.log(user)
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                console.log("reached5")
+                res.json({ success: true, result: result })
+            }
+        });
+    }
+
+}).post("/getAccount2", function (req, res) {
+    let call = null;
+    if (admin) {
+        call = 'select accountID from bank_account where bankID = ?'
+        connection.query(call, [req.body.bankID], function (err, result) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                console.log("reached2")
+                res.json({ success: true, result: result })
+            }
+        })
+    } else {
+        call = 'select accountID from bank_account where bankID = ? and bankID in (select bankID from access where perID=?)'
+        connection.query(call, [req.body.bankID, user], function (err, result) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                console.log("reached4")
+                res.json({ success: true, result: result })
+            }
+        })
+    }
+
+}).post("/makeTransfer", function (req, res) {
+    console.log("maketransfer");
+    let call = 'call account_transfer(?, ?, ?, ?, ?, ?, ?)';
+    connection.query(call, [user, req.body.amount, req.body.bank1, req.body.account1, req.body.bank2, req.body.account2, null], function (err, rows) {
+        if (err) {
+            console.log(err)
+            res.json({ success: false, message: "Could not transfer" })
+            console.log("could not transfer")
+        } else {
+            console.log("reached3")
+
+            res.json({ success: true, message: "Transfer success" })
+            console.log("Transfer succeeded")
+        }
+    });
+});
+
 /*
  * Manager Menu
  */
@@ -516,6 +637,7 @@ app.get("/payEmployees", function (req, res) {
         }
     })
 })
+
 
 
 /**
