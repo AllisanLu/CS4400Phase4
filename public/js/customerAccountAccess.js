@@ -26,7 +26,7 @@ function remove(event) {
     //event.preventDefault()
     let xhr = new XMLHttpRequest
     xhr.addEventListener("load", responseHandler)
-    query = `pid=${bank.value}&account=${account.value}`
+    query = `pid=${bank.value}&account=${account.value}&bankID=${bank.value}`
     //console.log(query)
     // when submitting a GET request, the query string is appended to URL
     // but in a POST request, do not attach the query string to the url

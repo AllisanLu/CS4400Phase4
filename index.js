@@ -36,6 +36,8 @@ app.use(express.urlencoded({ extended: false }));
  */
 app.get("/logout", function (req, res) {
     authenticated = false;
+    admin = false;
+    manager = false;
     user = "";
     res.sendFile(__dirname + "/public/" + "index.html");
 })
@@ -605,6 +607,9 @@ app.get("/displayEmployeeStats", function (req, res) {
  */
 app.get("/customerAccountAccess", function (req, res) {
     let call = 'select accountID from access where perID = ?'
+    if (admin) {
+        call = 'select accountID from access'
+    }
     let call2 = 'select perID from customer'
     let call3 = 'select bankID from bank'
     connection.query(call, [], function (err, result1) {
@@ -620,6 +625,9 @@ app.get("/customerAccountAccess", function (req, res) {
     })
 }).post("/getCustomerAccounts", function (req, res) {
     let call = 'select accountID from access where bankID = ? and perID = ?'
+    if (admin) {
+        call = 'select accountID from access where bankID = ?'
+    }
     connection.query(call, [req.body.bankID, user], function (err, result) {
         if (err) {
             res.json({ success: false, message: "" })
@@ -631,12 +639,14 @@ app.get("/customerAccountAccess", function (req, res) {
 
 app.post("/addAccountAccess", function (req, res) {
     let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
-    connection.query(call, [user, req.body.pid, null, req.body.bankID, req.body.account, null, null, null, null, null, null, null],
+    connection.query(call, [user, req.body.pid, null, req.body.bank, req.body.account, null, null, null, null, null, null, null], //date
         function (err, results) {
             if (err) {
                 res.json({ success: false, message: "Could not add account access" })
+                console.log("could not add account access")
             } else {
                 res.json({ success: true, message: "Added Account Access", admin: admin })
+                console.log("added account access")
             }
         }
     );
@@ -648,15 +658,17 @@ app.post("/removeAccountAccess", function (req, res) {
         function (err, results) {
             if (err) {
                 res.json({ success: false, message: "Could not remove account access" })
+                console.log("could not remove account access")
             } else {
                 res.json({ success: true, message: "Removed Account Access", admin: admin })
+                console.log("removed account access")
             }
         }
     );
 });
 
 app.get("/adminAccountAccess", function (req, res) {
-    let call = 'select accountID from access where perID = ?'
+    let call = 'select accountID from access'
     let call2 = 'select perID from customer'
     let call3 = 'select bankID from bank'
     connection.query(call, [], function (err, result1) {
