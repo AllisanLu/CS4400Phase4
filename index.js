@@ -654,6 +654,7 @@ app.post("/addAccountAccess", function (req, res) {
 
 app.post("/removeAccountAccess", function (req, res) {
     let call = 'call remove_account_access(?, ?, ?, ?)'
+    console.log(user);
     connection.query(call, [user, req.body.pid, req.body.bankID, req.body.account],
         function (err, results) {
             if (err) {
