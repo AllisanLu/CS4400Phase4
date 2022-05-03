@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CS4400</title>
+    <script src="/js/manageOverdraft.js" defer></script>
+</head>
+<body onload="updateAccounts();">
+    <h1>Manage Overdraft</h1>
+    <form>
+        <!-- drop downs :D -->
+        <div>
+            <label for="Availablbe Checking Accounts"></label>
+            <select id="CheckingIDs">
+                <% for (const i in checkingID) { %>
+                    <option value="<%= checkingID[i].accountID %>"> <%= checkingID[i].accountID %> </option>
+                <% } %>
+            </select>
+        <div>
+            <label for="accept">
+                <input type="checkbox" id="submit" name="submit" value="yes" onclick="activateOverdraft(this)"> Submit
+            </label>
+            
+            <script>
+                function activateOverdraft(submit) {
+                    SavingsIDs.disableed=submit.checked? false:true;
+                    if (!SavingIDs.disabled) {
+                        SavingsIDs.focus();
+                    }
+                }
+            <script>
+        <div>
+            <label for="Available Savings Accounts"></label>
+            <select id="SavingIDs">
+                <% for (const i in accounts) { %>
+                    <option value="<%= savingsID[i].accountID %>"> <%= savingsID[i].accountID %> </option>
+                <% } %>
+            </select>
+        </div>
+        <div>
+            <label for="type"></label>
+            <input id="type" />
+        </div>
+        
+        //Change to be back to window based on who came here
+        <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/adminMenu'" />
+        <input type="submit" value="Confirm" id="create"> 
+    </form>
+    <p hidden id="message"></p>
+</body>
+</html>
