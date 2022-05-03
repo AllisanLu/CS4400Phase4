@@ -33,7 +33,11 @@
             </select>
         </div>
 
-        <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/customerMenu'" />
+        <% if (admin) { %>
+            <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/adminMenu'" />
+        <%} else {%>
+            <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/customerMenu'" />
+        <% } %>
         <input type="submit" value="Remove" id="remove"> 
         <input type="submit" value="Add" id="add"> 
     </form>

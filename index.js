@@ -610,14 +610,13 @@ app.get("/customerAccountAccess", function (req, res) {
                 if (err) {
                     res.json({ success: false, message: "" })
                 } else {
-                    res.render(__dirname + "/public/" + "customerAccountAccess.ejs", { accounts: result1, customers: result2, banks: result3 })
+                    res.render(__dirname + "/public/" + "customerAccountAccess.ejs", { accounts: result1, customers: result2, banks: result3, admin: admin })
                 }
             })
         })
     })
 }).post("/getCustomerAccounts", function (req, res) {
     let call = 'select accountID from access where bankID = ? and perID = ?'
-    console.log("bleh" + user)
     connection.query(call, [req.body.bankID, user], function (err, result) {
         if (err) {
             res.json({ success: false, message: "" })
@@ -653,6 +652,35 @@ app.post("/removeAccountAccess", function (req, res) {
     );
 });
 
+app.get("/adminAccountAccess", function (req, res) {
+    let call = 'select accountID from access where perID = ?'
+    let call2 = 'select perID from customer'
+    let call3 = 'select bankID from bank'
+    connection.query(call, [], function (err, result1) {
+        connection.query(call2, [], function (err, result2) {
+            connection.query(call3, [], function (err, result3) {
+                if (err) {
+                    res.json({ success: false, message: "" })
+                } else {
+                    res.render(__dirname + "/public/" + "adminAccountAccess.ejs", { accounts: result1, customers: result2, banks: result3})
+                }
+            })
+        })
+    })
+})
+
+app.post("/addAccount", function (req, res) {
+    let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
+    connection.query(call, [user, req.body.pid, req.body.type, req.body.bankID, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, null],
+        function (err, results) {
+            if (err) {
+                res.json({ success: false, message: "Could not add account access" })
+            } else {
+                res.json({ success: true, message: "Added Account Access", admin: admin })
+            }
+        }
+    );
+})
 
 app.listen(3000, function () {
     console.log("Listening on port 3000...");
