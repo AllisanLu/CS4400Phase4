@@ -1,4 +1,5 @@
-let connector = document.getElementById("create")
+let startOverdraft = document.getElementById("startOverdraft")
+let stopOverdraft = document.getElementByID("stopOverdraft")
 let checking_accountID = document.getElementById("checking_accountID")
 let savings_accountID = document.getElementById("savings_accountID")
 
@@ -15,13 +16,29 @@ function startOverdraft(event) {
     // but in a POST request, do not attach the query string to the url
     // instead pass it as a parameter in xhr.send()
     
-    url = `/manageOverdraft`
+    url = `/startOverdraft`
     xhr.responseType = "json";
     xhr.open("POST", url)
     
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     // notice the query string is passed as a parameter in xhr.send()
     // this is to prevent the data from being easily sniffed
+    xhr.send(query)
+}
+
+function stopOverdraft(event) {
+    event.preventDefault()
+    let xhr = new XMLHttpRequest
+    xhr.addEventListener("load", responseHandler)
+    
+    query = `checking_accountID=${checking_accountID.value}&savings_accountID=${savings_accountID.value}`
+    
+    url = `/stopOverdraft`
+    xhr.responseType = "json";
+    xhr.open("POST", url)
+    
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+    
     xhr.send(query)
 }
 
@@ -40,4 +57,5 @@ function responseHandler() {
         message.innerText = this.response.message
     }
 }
-connector.addEventListener("click", startOverdraft)
+startOverdraft.addEventListener("click", startOverdraft)
+stopOverdraft.addEventListener("click", stopOverdraft)

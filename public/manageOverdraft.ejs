@@ -22,7 +22,7 @@
             
             <script>
                 function activateOverdraft(submit) {
-                    SavingsIDs.disableed=submit.checked? false:true;
+                    SavingsIDs.disabled=submit.checked? false:true;
                     if (!SavingIDs.disabled) {
                         SavingsIDs.focus();
                     }
@@ -43,7 +43,12 @@
         
         //Change to be back to window based on who came here
         <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/adminMenu'" />
-        <input type="submit" value="Confirm" id="create"> 
+        
+        if (submit.checked) {   
+            <input type="submit" value="Confirm" id="Start Overdraft"> 
+        } else {
+            <input type="submit" value="Confirm" id="Stop Overdraft">
+        }
     </form>
     <p hidden id="message"></p>
 </body>
