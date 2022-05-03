@@ -746,27 +746,24 @@ app.get("/displayEmployeeStats", function (req, res) {
  * Manage account access stuff
  */
 app.get("/customerAccountAccess", function (req, res) {
-    let call = 'select accountID from access where perID = ?'
-    if (admin) {
-        call = 'select accountID from access'
-    }
+    let adminView = 'select bankID from bank'
+    let customerView = 'select distinct bank.bankID from bank join access where bank.bankID = access.bankID and access.perID = ?;'
+    let call = (admin) ? adminView : customerView
     let call2 = 'select perID from customer'
-    let call3 = 'select bankID from bank'
-    connection.query(call, [], function (err, result1) {
+
+    connection.query(call, [user], function (err, result1) {
         connection.query(call2, [], function (err, result2) {
-            connection.query(call3, [], function (err, result3) {
-                if (err) {
-                    res.json({ success: false, message: "" })
-                } else {
-                    res.render(__dirname + "/public/" + "customerAccountAccess.ejs", { accounts: result1, customers: result2, banks: result3, admin: admin })
-                }
-            })
+            if (err) {
+                res.json({ success: false, message: ""})
+            } else {
+                res.render(__dirname + "/public/" + "customerAccountAccess.ejs", {banks: result1, accounts: [], customers: result2, admin: admin })
+            }
         })
-    })
+    });
 }).post("/getCustomerAccounts", function (req, res) {
-    let call = 'select accountID from access where bankID = ? and perID = ?'
+    let call = 'select distinct accountID from access where bankID = ? and perID = ?'
     if (admin) {
-        call = 'select accountID from access where bankID = ?'
+        call = 'select distinct accountID from access where bankID = ?'
     }
     connection.query(call, [req.body.bankID, user], function (err, result) {
         if (err) {
@@ -775,9 +772,7 @@ app.get("/customerAccountAccess", function (req, res) {
             res.json({ success: true, result: result })
         }
     });
-})
-
-app.post("/addAccountAccess", function (req, res) {
+}).post("/addAccountAccess", function (req, res) {
     let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
 
     var today = new Date();
@@ -798,9 +793,7 @@ app.post("/addAccountAccess", function (req, res) {
             }
         }
     );
-})
-
-app.post("/removeAccountAccess", function (req, res) {
+}).post("/removeAccountAccess", function (req, res) {
     let call = 'call remove_account_access(?, ?, ?, ?)'
 
     connection.query(call, [user, req.body.pid, req.body.bankID, req.body.account],
