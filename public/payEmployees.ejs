@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CS4400</title>
+    <script src="/js/payEmployees.js" defer></script>
+</head>
+<body>
+    <h1>Pay employees</h1>
+    <button id="pay">Pay all employees</button>
+    <% if (admin) { %>
+            <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/adminMenu'" />
+        <%} else {%>
+            <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/customerMenu'" />
+        <% } %>
+    <p hidden id="message"></p>
+</body>
+</html>

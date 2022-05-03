@@ -77,6 +77,11 @@ function responseHandler() {
     if (this.response.success) {
         message.innerText = this.response.message;
         //window.location.href = "index";
+        if (this.response.admin) {
+            window.location.href = "adminMenu"
+        } else {
+            window.location.href = "customerMenu"
+        }
     } else {
         console.log(this.response.success)
         message.innerText = this.response.message

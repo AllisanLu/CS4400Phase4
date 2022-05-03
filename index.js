@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",   
-    password: "astroslime123",
+    password: "Wahaha!!",
     database: "bank_management"
 });
 
@@ -70,7 +70,13 @@ app.post("/attempt_login", function (req, res) {
                     connection.query("select manager from bank where manager = ?", [req.body.username], function (err, rows) {
                         if (!err && rows.length > 0) {
                             manager = true;
-                            res.json({ success: true, message: "manager" })
+                            connection.query("select perID from customer where perID = ?", [req.body.username], function (err, rows) {
+                                if (!err && rows.length > 0) {
+                                    res.json({success: true, message: "manager&customer"})
+                                } else {
+                                    res.json({ success: true, message: "manager" })
+                                }
+                            })
                         } else {
                             res.json({ success: true, message: "customer" })
                         }
@@ -87,6 +93,10 @@ app.post("/attempt_login", function (req, res) {
  */
 app.get("/adminMenu", function (req, res) {
     res.sendFile(__dirname + "/public/" + "Admin.html");
+})
+
+app.get("/rolechoice", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "rolechoice.html");
 })
 
 app.get("/manageUsers", function (req, res) {
@@ -337,7 +347,7 @@ app.get("/withdrawPage", function (req, res) {
     });
 })
 app.post("/withdraw", function (req, res) {
-    let call = 'call account_withdrawl(?, ?, ?, ?, ?)';
+    let call = 'call account_withdrawal(?, ?, ?, ?, ?)';
     connection.query(call, [user, req.body.amount, req.body.bank, req.body.account, null],
         function (err, rows) {
             if (err) {
@@ -629,7 +639,7 @@ app.get("/managerMenu", function (req, res) {
  * Pays all employees in the system
  */
 app.get("/payEmployees", function (req, res) {
-    res.sendFile(__dirname + "/public/" + "payEmployees.html");
+    res.render(__dirname + "/public/" + "payEmployees.ejs", {admin: admin});
 }).post("/payAllEmployees", function (req, res) {
     console.log("paying all employees");
     let call = 'call pay_employees()';
@@ -637,7 +647,8 @@ app.get("/payEmployees", function (req, res) {
         if (err) {
             res.json({ success: false, message: "Could not pay employees" })
         } else {
-            res.json({ sucess: true, message: "Employees paid" })
+            res.json({ success: true, message: "Employees paid", admin: admin })
+            console.log("employees paid")
         }
     })
 })
@@ -760,7 +771,15 @@ app.get("/customerAccountAccess", function (req, res) {
 
 app.post("/addAccountAccess", function (req, res) {
     let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
-    connection.query(call, [user, req.body.pid, null, req.body.bank, req.body.account, null, null, null, null, null, null, null], //date
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); 
+    var yyyy = today.getFullYear();
+    var date = yyyy + "-" + mm + "-" + dd;
+
+    //console.log(date);
+    connection.query(call, [user, req.body.pid, "", req.body.bank, req.body.account, 0, 0, null, 0, 0, 0, date], //date
         function (err, results) {
             if (err) {
                 res.json({ success: false, message: "Could not add account access" })
