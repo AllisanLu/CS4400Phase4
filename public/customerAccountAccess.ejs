@@ -2,10 +2,10 @@
 <html>
 <head>
     <title>CS4400</title>
-    <script src="/js/createFee.js" defer></script>
+    <script src="/js/customerAccountAccess.js" defer></script>
 </head>
 <body onload="updateAccounts();">
-    <h1>New Fee</h1>
+    <h1>Manage Account Access</h1>
     <form>
         <!-- drop downs :D -->
         <div>
@@ -16,6 +16,7 @@
                 <% } %>
             </select>
         </div>
+        <div>
             <label for="account"></label>
             <select id="account">
                 <% for (const i in accounts) { %>
@@ -24,12 +25,17 @@
             </select>
         </div>
         <div>
-            <label for="type"></label>
-            <input id="type" />
+            <label for="customer"></label>
+            <select id="customer">
+                <% for (const i in customers) { %>
+                    <option value="<%= customers[i].perID %>"> <%= customers[i].perID %> </option>
+                <% } %>
+            </select>
         </div>
 
-        <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/adminMenu'" />
-        <input type="submit" value="Confirm" id="create"> 
+        <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/customerMenu'" />
+        <input type="submit" value="Remove" id="remove"> 
+        <input type="submit" value="Add" id="add"> 
     </form>
     <p hidden id="message"></p>
 </body>
