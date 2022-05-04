@@ -9,7 +9,7 @@ function addEmployee(event) {
     event.preventDefault()
     let xhr = new XMLHttpRequest
     xhr.addEventListener("load", responseHandler)
-    query = `pid=${pid.value}&salary=${salary.value}&payments=${payments}&earned=${earnings}`
+    query = `pid=${pid.value}&salary=${salary.value}&payments=${payments.value}&earned=${earnings.value}`
     //console.log(query)
     // when submitting a GET request, the query string is appended to URL
     // but in a POST request, do not attach the query string to the url
