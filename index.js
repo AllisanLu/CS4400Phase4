@@ -924,12 +924,11 @@ app.post("/addNewAccount", function (req, res) {
     var yyyy = today.getFullYear();
     var date = yyyy + "-" + mm + "-" + dd;
 
-    var type = req.body.type.trim()
-
-    connection.query(call, [user, req.body.pid, type, req.body.bankID, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, date],
+    console.log("adding account")
+    connection.query(call, [user, req.body.pid, req.body.type, req.body.bank, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, date],
         function (err, results) {
             if (err) {
-                console.log(err)
+                console.log(err);
                 res.json({ success: false, message: "Could not add account access" })
                 console.log("no add account access")
             } else {
