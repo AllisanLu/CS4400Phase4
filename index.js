@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",   
-    password: "astroslime123",
+    password: "Wahaha!!",
     database: "bank_management"
 });
 
@@ -225,13 +225,13 @@ app.post("/stopEmployee", function (req, res) {
  */
 app.get("/hireWorker", function (req, res) {
     let call = 'select bankID from bank'
-    let call2 = 'select perID from employee'
+    let call2 = 'select perID from employee where perID not in (select manager from bank)'
     connection.query(call, [], function (err, result1) {
         connection.query(call2, [], function (err, result2) {
             if (err) {
                 res.json({ success: false, message: "server error" })
             } else {
-                res.render(__dirname + "/public/" + "hireWorker.ejs", { banks: result1, perIDs: result2 })
+                res.render(__dirname + "/public/" + "hireWorker.ejs", { banks: result1, perIDs: result2, admin: admin })
             }
         })
     })
@@ -300,8 +300,8 @@ app.get("/depositPage", function (req, res) {
         })
     })
 }).post("/getAccounts", function (req, res) {
-    let call = 'select accountID from bank_account where bankID = ?'
-    connection.query(call, [req.body.bankID], function (err, result) {
+    let call = 'select accountID from access where bankID = ? and perID = ?'
+    connection.query(call, [req.body.bankID, user], function (err, result) {
         if (err) {
             res.json({ success: false, message: "" })
         } else {
@@ -338,8 +338,8 @@ app.get("/withdrawPage", function (req, res) {
         })
     })
 }).post("/getAccounts", function (req, res) {
-    let call = 'select accountID from interest_bearing where bankID = ?'
-    connection.query(call, [req.body.bankID], function (err, result) {
+    let call = 'select accountID from access where bankID = ? and perID = ?'
+    connection.query(call, [req.body.bankID, user], function (err, result) {
         if (err) {
             res.json({ success: false, message: "" })
         } else {
@@ -440,14 +440,17 @@ app.get("/createCorporation", function (req, res) {
  */
 app.get("/createBank", function (req, res) {
     let call = 'select corpID from corporation'
+    let call3 = 'select perID from employee where perID not in (select manager from bank) and perID not in (select perID from workfor)'
     let call2 = 'select perID from employee where perID not in (select manager from bank)'
     connection.query(call, [], function (err, result1) {
         connection.query(call2, [], function (err, result2) {
-            if (err) {
-                res.json({ success: false, message: "" })
-            } else {
-                res.render(__dirname + "/public/" + "createBank.ejs", { corpIDs: result1, employees: result2 })
-            }
+            connection.query(call3, [], function (err, result3) {
+                if (err) {
+                    res.json({ success: false, message: "" })
+                } else {
+                    res.render(__dirname + "/public/" + "createBank.ejs", { corpIDs: result1, employees: result2, managers: result3 })
+                }
+            })
         })
     })
 }).post("/addBank", function (req, res) {
@@ -938,7 +941,8 @@ app.post("/addAccount", function (req, res) {
 
 app.get("/addNewEmployee", function (req, res) {
     res.sendFile(__dirname + "/public/" + "addNewEmployee.html");
-}).post("/addEmployee", function (req, res) {
+})
+app.post("/addEmployee", function (req, res) {
     let call = 'call start_employee_role(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
     var today = new Date();

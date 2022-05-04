@@ -34,6 +34,9 @@ function addEmployee(event) {
     // notice the query string is passed as a parameter in xhr.send()
     // this is to prevent the data from being easily sniffed
     xhr.send(query)
+
+    // Redirect back to admin menu
+    window.location.href = '/manageUsers'
 }
 
 function responseHandler() {

@@ -66,7 +66,7 @@ function responseHandler() {
     message.style.display = "block"
     if (this.response.success) {
         message.innerText = this.response.message;
-        //window.location.href = "index";
+        window.location.href = "adminMenu";
     } else {
         console.log(this.response.success)
         message.innerText = this.response.message

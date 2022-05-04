@@ -27,7 +27,12 @@
             <label for="salary">Salary: </label>
             <input id = "salary" />
         </div>
-        <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/manageUsers'" />
+        
+        <% if (admin) { %>
+            <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/adminMenu'" />
+        <%} else {%>
+            <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/managerMenu'" />
+        <% } %>
         <input type="submit" value="Hire" id="create"> 
     </form>
     <p hidden id="message"></p>
