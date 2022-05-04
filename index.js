@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",   
-    password: "Wahaha!!",
+    password: "astroslime123",
     database: "bank_management"
 });
 
@@ -504,7 +504,7 @@ app.get("/manageOverdraft", function (req, res) {
     } else {
         call1 = 'select bankID from bank where bankID in (select bankID from access where perID=?)'
         call2 = 'select bankID, accountID from checking where accountID in (select accountID from access where perID=?)'
-        call3 = 'select bankID from bank where accountID in (select accountID from access where perID=?)'
+        call3 = 'select bankID from bank where bankID in (select bankID from access where perID=?)'
         call4 = 'select bankID, accountID from savings where accountID in (select accountID from access where perID=?)'
         connection.query(call1, [user], function (err, result1) {
             connection.query(call2, [user], function (err, result2) {
@@ -550,9 +550,12 @@ app.get("/manageOverdraft", function (req, res) {
 }).post("/getSavingsAccount", function (req, res) {
     console.log("enter3")
     let call = null
+    console.log([req.body.bankID])
     if (admin) {
         call = 'select accountID from savings where bankID = ?'
         connection.query(call, [req.body.bankID], function (err, result) {
+            console.log([req.body.bankID])
+
             if (err) {
                 res.json({ success: false, message: "" })
             } else {
@@ -560,8 +563,13 @@ app.get("/manageOverdraft", function (req, res) {
             }
         });
     } else {
-        call = 'select accountID from savings where bankID = ? and bankID in (select bankID from access where perID=?)'
+      //call = 'select accountID from bank_account where bankID = ? and bankID in (select bankID from access where perID=?)'
+
+        call = 'select accountID from savings where bankID = ? and accountID in (select accountID from access where perID=?)'
         connection.query(call, [req.body.bankID, user], function (err, result) {
+            console.log([req.body.bankID])
+            console.log(user)
+
             if (err) {
                 res.json({ success: false, message: "" })
             } else {
@@ -577,7 +585,7 @@ app.get("/manageOverdraft", function (req, res) {
         if (err) {
             res.json({ success: false, message: "Could not link accounts" })
         } else {
-            res.json({ success: true, message: "Started Overdraft Protection"})
+            res.json({ success: true, message: "Started Overdraft Protection", admin: admin })
         }
     });
 }).post("/stopOverdraft", function (req, res) {
@@ -587,7 +595,7 @@ app.get("/manageOverdraft", function (req, res) {
         if (err) {
             res.json({ success: false, message: "Could not link accounts" })
         } else {
-            res.json({ success: true, message: "Started Overdraft Protection"})
+            res.json({ success: true, message: "Started Overdraft Protection", admin: admin })
         }
     });
 });

@@ -46,7 +46,11 @@ function responseHandler() {
     message.style.display = "block"
     if (this.response.success) {
         message.innerText = this.response.message;
-        window.location.href = "adminMenu";
+        if (this.response.admin) {
+            window.location.href = "adminMenu";
+        } else {
+            window.location.href = "customerMenu";
+        }
     } else {
         console.log(this.response.success)
         message.innerText = this.response.message
@@ -107,6 +111,7 @@ function updateSavingsAccount(event) {
         }
     })
     query2 = `bankID=${savingsbank.value}`
+    //console.log(savingsbank.value)
     url2 = `/getSavingsAccount`
    // url2 = `/getAccount2`
     xhr2.responseType = "json";
