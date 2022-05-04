@@ -112,7 +112,7 @@ app.get("/customerMenu", function (req, res) {
  *  Customer/Employee Role stuff
  */
 app.get("/createEmployeeRole", function (req, res) {
-    let call = 'select perID from customer'
+    let call = 'select perID from customer where perID not in (select perID from employee)'
     connection.query(call, [], function (err, result) {
         if (err) {
             res.json({ success: false, message: "could not load page" })
@@ -136,7 +136,7 @@ app.get("/createCustomerRole", function (req, res) {
 app.post("/addEmployeeRoleFromCustomer", function (req, res) {
     console.log("adding employee")
     let call = 'call start_employee_role(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    connection.query(call, [req.body.pid, null, null, null, null, null, null, null, null, null, null, null, req.body.salary, req.body.payments, req.body.earned],
+    connection.query(call, [req.body.pid, null, null, null, null, null, null, null, null, null, req.body.salary, req.body.payments, req.body.earned, null],
         function (err, rows) {
             if (err) {
                 console.log(err)
