@@ -9,7 +9,7 @@
     <form>
         <!-- drop downs :D -->
         <div>
-            <label for="bank"></label>
+            <label for="bank">Bank: </label>
             <select id="bank">
                 <% for (const i in banks) { %>
                     <option value="<%= banks[i].bankID %>"> <%= banks[i].bankID %> </option>
@@ -17,7 +17,7 @@
             </select>
         </div>
         <div>
-            <label for="account"></label>
+            <label for="account">Account: </label>
             <select id="account">
                 <% for (const i in accounts) { %>
                     <option value="<%= accounts[i].accountID %>"> <%= accounts[i].accountID %> </option>
@@ -25,7 +25,7 @@
             </select>
         </div>
         <div>
-            <label for="customer"></label>
+            <label for="customer">User: </label>
             <select id="customer">
                 <% for (const i in customers) { %>
                     <option value="<%= customers[i].perID %>"> <%= customers[i].perID %> </option>

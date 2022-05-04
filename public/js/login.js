@@ -30,7 +30,10 @@ function responseHandler() {
         }
         else if (this.response.message == "manager") {
             window.location.href = "managerMenu";
-        } else {
+        } else if (this.response.message == "manager&customer") {
+            window.location.href = "rolechoice"
+        }
+        else {
             window.location.href = "customerMenu";
         }
     } else {

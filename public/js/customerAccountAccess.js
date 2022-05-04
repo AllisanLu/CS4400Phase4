@@ -1,6 +1,6 @@
 let registerButton = document.getElementById("add")
 let removeButton = document.getElementById("remove")
-let pID = document.getElementById("customer")
+let pid = document.getElementById("customer")
 let account = document.getElementById("account")
 let bank = document.getElementById("bank")
 
@@ -8,7 +8,7 @@ function add(event) {
     //event.preventDefault()
     let xhr = new XMLHttpRequest
     xhr.addEventListener("load", responseHandler)
-    query = `pid=${bank.value}&account=${account.value}&bank=${bank.value}`
+    query = `pid=${pid.value}&account=${account.value}&bank=${bank.value}`
     //console.log(query)
     // when submitting a GET request, the query string is appended to URL
     // but in a POST request, do not attach the query string to the url
@@ -26,7 +26,7 @@ function remove(event) {
     //event.preventDefault()
     let xhr = new XMLHttpRequest
     xhr.addEventListener("load", responseHandler)
-    query = `pid=${bank.value}&account=${account.value}&bankID=${bank.value}`
+    query = `pid=${pid.value}&account=${account.value}&bankID=${bank.value}`
     //console.log(query)
     // when submitting a GET request, the query string is appended to URL
     // but in a POST request, do not attach the query string to the url
@@ -77,6 +77,11 @@ function responseHandler() {
     if (this.response.success) {
         message.innerText = this.response.message;
         //window.location.href = "index";
+        if (this.response.admin) {
+            window.location.href = "adminMenu"
+        } else {
+            window.location.href = "customerMenu"
+        }
     } else {
         console.log(this.response.success)
         message.innerText = this.response.message

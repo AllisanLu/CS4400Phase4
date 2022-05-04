@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CS4400</title>
+    <script src="/js/addNewCustomer.js" defer></script>
+</head>
+<body>
+    <h1>Create Employee</h1>
+    <form>
+        <div><label for="perID">Customer ID:</label> <input id="perID" /></div>
+        <div><label for="password">Password:</label> <input id="password" /></div>
+        <div><label for="taxID">Tax ID:</label> <input id="taxID" /></div>
+        <div><label for="firstname">First name: </label> <input id="firstname" /></div>
+        <div><label for="lastname">Last name: </label> <input id="lastname" /></div>
+        <div><label for="bdate">Bdate (YYYY-MM-DD) </label> <input id="bdate" /></div>
+
+        <div><label for="street">Street</label> <input id="street" /></div>
+        <div><label for="city">City</label> <input id="city" /></div>
+        <div><label for="state">State</label> <input id="state" /></div>
+        <div><label for="zip">Zip code</label> <input id="zip" /></div>
+
+        <input type="button" value="Cancel" name="cancel" onclick="window.location.href='/manageUsers'" />
+        <input type="submit" value="Create Customer" id="create">
+    </form>
+    <p hidden id="message"></p>
+</body>
+</html>

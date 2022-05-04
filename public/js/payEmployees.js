@@ -14,21 +14,20 @@ function payEmployees(event) {
     xhr.responseType = "json";
     xhr.open("POST", url)
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-    // notice the query string is passed as a parameter in xhr.send()
-    // this is to prevent the data from being easily sniffed
-    console.log("test")
     xhr.send(query)
-
-    // Redirect back to admin menu
-    window.location.href='/adminMenu'
 }
 
 function responseHandler() {
+    console.log("wahoo")
     let message = document.getElementById("message")
     message.style.display = "block"
     if (this.response.success) {
         message.innerText = this.response.message;
-        window.location.href = "index";
+        if (this.response.admin) {
+            window.location.href = "adminMenu"
+        } else {
+            window.location.href = "managerMenu";
+        }
     } else {
         console.log(this.response.success)
         message.innerText = this.response.message
