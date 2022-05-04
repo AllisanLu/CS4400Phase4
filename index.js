@@ -917,16 +917,21 @@ app.get("/adminAccountAccess", function (req, res) {
 })
 
 app.post("/addAccount", function (req, res) {
+
     let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
     var date = yyyy + "-" + mm + "-" + dd;
-
-    connection.query(call, [user, req.body.pid, req.body.type, req.body.bankID, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, date],
+    console.log("adding account")
+    console.log(req.body.pid)
+    console.log(req.body.type)
+    console.log(req.body.bankID)
+    connection.query(call, [user, req.body.pid, req.body.type, req.body.bank, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, date],
         function (err, results) {
             if (err) {
+                console.log(err);
                 res.json({ success: false, message: "Could not add account access" })
             } else {
                 res.json({ success: true, message: "Added Account Access", admin: admin })
