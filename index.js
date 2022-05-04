@@ -386,7 +386,7 @@ app.get("/createFee", function (req, res) {
             }
         })
     })
-}).post("/getAccounts", function (req, res) {
+}).post("/getInterestAccounts", function (req, res) {
     let call = 'select accountID from interest_bearing where bankID = ?'
     connection.query(call, [req.body.bankID], function (err, result) {
         if (err) {

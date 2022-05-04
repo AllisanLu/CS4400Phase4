@@ -53,7 +53,7 @@ function updateAccounts(event) {
         }
     })
     query = `bankID=${bank.value}`
-    url = `/getAccounts`
+    url = `/getInterestAccounts`
     xhr.responseType = "json";
     xhr.open("POST", url)
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
