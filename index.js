@@ -4,12 +4,6 @@ const mysql = require("mysql2")
 let authenticated = false;
 let admin = false;
 let manager = false;
-var today = new Date();
-var dd = String(today.getDate()).padStart(2, '0');
-var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-var yy = today.getFullYear();
-
-today = yy + '-' + mm + '-' + dd;
 
 let user = "";
 
@@ -60,7 +54,6 @@ app.post("/attempt_login", function (req, res) {
             if (req.body.password === storedPassword) {
                 user = req.body.username
                 authenticated = true;
-                console.log(today);
 
             } else {
                 res.json({ success: false, message: "password is incorrect" })
@@ -622,7 +615,13 @@ app.get("/manageOverdraft", function (req, res) {
 }).post("/makeTransfer", function (req, res) {
     console.log("maketransfer");
     let call = 'call account_transfer(?, ?, ?, ?, ?, ?, ?)';
-    connection.query(call, [user, req.body.amount, req.body.bank1, req.body.account1, req.body.bank2, req.body.account2, today], function (err, rows) {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    var date = yyyy + "-" + mm + "-" + dd;
+
+    connection.query(call, [user, req.body.amount, req.body.bank1, req.body.account1, req.body.bank2, req.body.account2, date], function (err, rows) {
         if (err) {
             console.log(err)
             res.json({ success: false, message: "Could not transfer" })
@@ -835,7 +834,13 @@ app.get("/adminAccountAccess", function (req, res) {
 
 app.post("/addAccount", function (req, res) {
     let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
-    connection.query(call, [user, req.body.pid, req.body.type, req.body.bankID, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, null],
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    var date = yyyy + "-" + mm + "-" + dd;
+
+    connection.query(call, [user, req.body.pid, req.body.type, req.body.bankID, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, date],
         function (err, results) {
             if (err) {
                 res.json({ success: false, message: "Could not add account access" })
@@ -845,6 +850,60 @@ app.post("/addAccount", function (req, res) {
         }
     );
 })
+
+/*
+ * FRESH EMPLOYEE AND CUSTOMER
+ */
+
+app.get("/addNewEmployee", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "addNewEmployee.html");
+}).post("/addEmployee", function (req, res) {
+    let call = 'call start_employee_role(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    var date = yyyy + "-" + mm + "-" + dd;
+
+    connection.query(call, [req.body.pid, req.body.taxid, req.body.firstname, req.body.lastname, req.body.bdate, req.body.street, req.body.city, req.body.state, req.body.zip, date, req.body.salary, req.body.payments, req.body.earnings, req.body.password],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not add employee" })
+                console.log("could not add employee")
+            } else {
+                res.json({ success: true, message: "added employee" })
+                console.log("added employee")
+            }
+        }
+    );
+})
+app.get("/addNewCustomer", function (req, res) {
+    res.sendFile(__dirname + "/public/" + "addNewCustomer.html");
+}).post("/addCustomer", function (req, res) {
+    let call = 'call start_customer_role(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    var date = yyyy + "-" + mm + "-" + dd;
+
+    connection.query(call, [req.body.pid, req.body.taxid, req.body.firstname, req.body.lastname, req.body.bdate, req.body.street, req.body.city, req.body.state, req.body.zip, date, req.body.password],
+        function (err, rows) {
+            if (err) {
+                console.log(err)
+                res.json({ success: false, message: "Could not add customer" })
+                console.log("could not add customer")
+            } else {
+                res.json({ success: true, message: "added customer" })
+                console.log("added customer")
+            }
+        }
+    );
+})
+
 
 app.listen(3000, function () {
     console.log("Listening on port 3000...");
