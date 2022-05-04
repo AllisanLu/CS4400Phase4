@@ -75,3 +75,4 @@ function responseHandler() {
 
 registerButton.addEventListener("click", add)
 // bank.addEventListener("change", updateAccounts)
+

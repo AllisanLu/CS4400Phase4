@@ -916,13 +916,14 @@ app.get("/adminAccountAccess", function (req, res) {
     })
 });
 
-app.post("/addAccount", function (req, res) {
+app.post("/addNewAccount", function (req, res) {
     let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
     var date = yyyy + "-" + mm + "-" + dd;
+
     console.log("adding account")
     connection.query(call, [user, req.body.pid, req.body.type, req.body.bank, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, date],
         function (err, results) {
