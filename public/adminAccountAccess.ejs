@@ -2,9 +2,9 @@
 <html>
 <head>
     <title>CS4400</title>
-    <script src="/js/customerAccountAccess.js" defer></script>
+    <script src="/js/adminAccountAccess.js" defer></script>
 </head>
-<body onload="updateAccounts();">
+<body>
     <h1>Add New Account</h1>
     <form>
         <!-- drop downs :D -->
@@ -23,9 +23,9 @@
         <div>
             <label for="type"></label>
             <select id="type">
-                <option value="savings"> savings </option>
-                <option value="market" > market </option>
-                <option value="checking" > checking </option>
+                <option value="savings">savings</option>
+                <option value="checking">checking</option>
+                <option value="market">market</option>
             </select>
         </div>
         <div>
@@ -45,7 +45,7 @@
             <input id="interest" />
         </div>
         <div>
-            <label for="minbalance">Interest Rate:</label>
+            <label for="minbalance">Min Balance:</label>
             <input id="minbalance" />
         </div>
         <div>

@@ -909,14 +909,14 @@ app.get("/adminAccountAccess", function (req, res) {
                 if (err) {
                     res.json({ success: false, message: "" })
                 } else {
-                    res.render(__dirname + "/public/" + "adminAccountAccess.ejs", { accounts: result1, customers: result2, banks: result3})
+                    res.render(__dirname + "/public/" + "adminAccountAccess.ejs", { accounts: result1, customers: result2, banks: result3 })
                 }
             })
         })
     })
-})
+});
 
-app.post("/addAccount", function (req, res) {
+app.post("/addNewAccount", function (req, res) {
     let call = 'call add_account_access(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)'
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -924,12 +924,17 @@ app.post("/addAccount", function (req, res) {
     var yyyy = today.getFullYear();
     var date = yyyy + "-" + mm + "-" + dd;
 
-    connection.query(call, [user, req.body.pid, req.body.type, req.body.bankID, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, date],
+    var type = req.body.type.trim()
+
+    connection.query(call, [user, req.body.pid, type, req.body.bankID, req.body.account, req.body.initbalance, req.body.interest, null, req.body.minbalance, 0, req.body.maxwithdraws, date],
         function (err, results) {
             if (err) {
+                console.log(err)
                 res.json({ success: false, message: "Could not add account access" })
+                console.log("no add account access")
             } else {
                 res.json({ success: true, message: "Added Account Access", admin: admin })
+                console.log("added account access \o/")
             }
         }
     );
