@@ -10,6 +10,7 @@ let maxwithdraws = document.getElementById("maxwithdraws")
 let typeSel = document.getElementById("type")
 
 function add(event) {
+    console.log("waho!")
     //event.preventDefault()
     let xhr = new XMLHttpRequest
     xhr.addEventListener("load", responseHandler)
@@ -19,7 +20,7 @@ function add(event) {
     // when submitting a GET request, the query string is appended to URL
     // but in a POST request, do not attach the query string to the url
     // instead pass it as a parameter in xhr.send()
-    url = `/addAccount`
+    url = `/addNewAccount`
     xhr.responseType = "json";
     xhr.open("POST", url)
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
