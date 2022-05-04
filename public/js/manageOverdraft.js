@@ -1,20 +1,38 @@
-let registerButton = document.getElementById("transfer")
-let bank1 = document.getElementById("bank1")
-let account1 = document.getElementById("account1")
-let bank2 = document.getElementById("bank2")
-let account2 = document.getElementById("account2")
-let amount = document.getElementById("amount")
+let stopButton = document.getElementById("stop")
+let startButton = document.getElementById("start")
+let checkingbank = document.getElementById("checkingbank")
+let checkingaccount = document.getElementById("checkingaccount")
+let savingsbank = document.getElementById("savingsbank")
+let savingsaccount = document.getElementById("savingsaccount")
 
-function makeAccountTransfer(event) {
+function stopOverdraft(event) {
     //event.preventDefault()
     let xhr = new XMLHttpRequest
     xhr.addEventListener("load", responseHandler)
-    query = `amount=${amount.value}&bank1=${bank1.value}&account1=${account1.value}&bank2=${bank2.value}&account2=${account2.value}`
+    query = `checkingbank=${checkingbank.value}&checkingaccount=${checkingaccount.value}&savingsbank=${savingsbank.value}&savingsaccount=${savingsaccount.value}`
     //console.log(query)
     // when submitting a GET request, the query string is appended to URL
     // but in a POST request, do not attach the query string to the url
     // instead pass it as a parameter in xhr.send()
-    url = `/makeTransfer`
+    url = `/stopOverdraft`
+    xhr.responseType = "json";
+    xhr.open("POST", url)
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+    // notice the query string is passed as a parameter in xhr.send()
+    // this is to prevent the data from being easily sniffed
+    xhr.send(query)
+}
+
+function startOverdraft(event) {
+    //event.preventDefault()
+    let xhr = new XMLHttpRequest
+    xhr.addEventListener("load", responseHandler)
+    query = `checkingbank=${checkingbank.value}&checkingaccount=${checkingaccount.value}&savingsbank=${savingsbank.value}&savingsaccount=${savingsaccount.value}`
+    //console.log(query)
+    // when submitting a GET request, the query string is appended to URL
+    // but in a POST request, do not attach the query string to the url
+    // instead pass it as a parameter in xhr.send()
+    url = `/startOverdraft`
     xhr.responseType = "json";
     xhr.open("POST", url)
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -28,16 +46,20 @@ function responseHandler() {
     message.style.display = "block"
     if (this.response.success) {
         message.innerText = this.response.message;
-        window.location.href = "customerMenu";
+        if (this.response.admin) {
+            window.location.href = "adminMenu";
+        } else {
+            window.location.href = "customerMenu";
+        }
     } else {
         console.log(this.response.success)
         message.innerText = this.response.message
     }
 }
 
-function updateAccount1(event) {
-    while (account1.firstChild) {
-        account1.removeChild(account1.firstChild);
+function updateCheckingAccount(event) {
+    while (checkingaccount.firstChild) {
+        checkingaccount.removeChild(checkingaccount.firstChild);
     }
 
     //make another xml call lol
@@ -49,14 +71,14 @@ function updateAccount1(event) {
                 var o = document.createElement("option");
                 o.value = accounts[i].accountID;
                 o.text = accounts[i].accountID;
-                account1.appendChild(o);
+                checkingaccount.appendChild(o);
             }
         } else {
             console.log(this.response)
         }
     })
-    query1 = `bankID=${bank1.value}`
-    url1 = `/getAccount1`
+    query1 = `bankID=${checkingbank.value}`
+    url1 = `/getCheckingAccount`
    // url2 = `/getAccount2`
     xhr1.responseType = "json";
     xhr1.open("POST", url1)
@@ -67,11 +89,10 @@ function updateAccount1(event) {
     xhr1.send(query1)
 }
 
+function updateSavingsAccount(event) {
 
-function updateAccount2(event) {
-
-    while (account2.firstChild) {
-        account2.removeChild(account2.firstChild);
+    while (savingsaccount.firstChild) {
+        savingsaccount.removeChild(savingsaccount.firstChild);
     }
 
 
@@ -83,17 +104,18 @@ function updateAccount2(event) {
                 var o = document.createElement("option");
                 o.value = accounts[i].accountID;
                 o.text = accounts[i].accountID;
-                account2.appendChild(o);
+                savingsaccount.appendChild(o);
             }
         } else {
             console.log(this.response)
         }
     })
-    query2 = `bankID=${bank2.value}`
-    url2 = `/getAccount2`
+    query2 = `bankID=${savingsbank.value}`
+    //console.log(savingsbank.value)
+    url2 = `/getSavingsAccount`
    // url2 = `/getAccount2`
     xhr2.responseType = "json";
-    xhr2.open("POST", url1)
+    xhr2.open("POST", url2)
    // xhr.open("POST", url2)
     xhr2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     // notice the query string is passed as a parameter in xhr.send()
@@ -101,6 +123,8 @@ function updateAccount2(event) {
     xhr2.send(query2)
 }
 
-registerButton.addEventListener("click", makeAccountTransfer)
-bank1.addEventListener("change", updateAccount1) 
-bank2.addEventListener("change", updateAccount2)
+stopButton.addEventListener("click", stopOverdraft)
+startButton.addEventListener("click", startOverdraft)
+
+checkingbank.addEventListener("change", updateCheckingAccount) 
+savingsbank.addEventListener("change", updateSavingsAccount)
