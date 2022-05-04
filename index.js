@@ -469,40 +469,122 @@ app.get("/createBank", function (req, res) {
  * and calls the manageOverdraft procedure with the values selected
  */
 app.get("/manageOverdraft", function (req, res) {
+    let call1 = null
+    let call2 = null
+    let call3 = null
+    let call4 = null
+    console.log("enter1")
+
     if (admin) {
-        let call1 = 'select accountID from checking'
-        let call2 = 'select accountID from savings'
+        // call = 'select bankID from bank'
+        // call2 = 'select bankID, accountID from bank_account'
+        // call3 = 'select bankID as bid from bank'
+        // call4 = 'select bankID as bid, accountID as aid from bank_account'
+        call1 = 'select bankID from bank'
+        call2 = 'select bankID, accountID from checking'
+        call3 = 'select bankID from bank'
+        call4 = 'select bankID, accountID from savings'
+        connection.query(call1, [], function (err, result1) {
+            connection.query(call2, [], function (err, result2) {
+                connection.query(call3, [], function (err, result3) {
+                    connection.query(call4, [], function (err, result4) {
+                        if (err) {
+                            res.json({ success: false, message: "" })
+                        } else {
+                            res.render(__dirname + "/public/" + "manageOverdraft.ejs", { checkingbanks: result1, checkingaccounts: result2, savingsbanks: result3, savingsaccounts: result4, admin: admin })
+                        }
+                    })
+                })
+                
+            })
+        })
     } else {
-        let call1 = 'select accountID from checking where accountID in (select accountID from access where perID=?)'
-        let call2 = 'select accountID from savings where accountID in (select accountID from access where perID=?)'
+        call1 = 'select bankID from bank where bankID in (select bankID from access where perID=?)'
+        call2 = 'select bankID, accountID from checking where accountID in (select accountID from access where perID=?)'
+        call3 = 'select bankID from bank where accountID in (select accountID from access where perID=?)'
+        call4 = 'select bankID, accountID from savings where accountID in (select accountID from access where perID=?)'
+        connection.query(call1, [user], function (err, result1) {
+            connection.query(call2, [user], function (err, result2) {
+                connection.query(call3, [user], function (err, result3) {
+                    connection.query(call4, [user], function (err, result4) {
+                        if (err) {
+                            res.json({ success: false, message: "" })
+                        } else {
+                            res.render(__dirname + "/public/" + "manageOverdraft.ejs", { checkingbanks: result1, checkingaccounts: result2, savingsbanks: result3, savingsaccounts: result4, admin: admin })
+                        }
+                    })
+                })
+                
+            })
+        })
     }
-    connection.query(call1, [], function (err, result1) {
-        connection.query(call2, [], function (err, result2) {
+
+}).post("/getCheckingAccount", function (req, res) {
+    console.log("enter2")
+    let call = null
+    if (admin) {
+        call = 'select accountID from checking where bankID = ?'
+        connection.query(call, [req.body.bankID], function (err, result) {
             if (err) {
                 res.json({ success: false, message: "" })
             } else {
-                res.render(__dirname + "/public/" + "manageOverdraft.ejs", { checkingID: result1, savingsID: result2 })
+                console.log(call)
+                res.json({ success: true, result: result })
+                
             }
-        })
-    })
+        });
+    } else {
+        call = 'select accountID from checking where bankID = ? and bankID in (select bankID from access where perID=?)'
+        connection.query(call, [req.body.bankID, user], function (err, result) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                res.json({ success: true, result: result })
+            }
+        });
+    }
+
+}).post("/getSavingsAccount", function (req, res) {
+    console.log("enter3")
+    let call = null
+    if (admin) {
+        call = 'select accountID from savings where bankID = ?'
+        connection.query(call, [req.body.bankID], function (err, result) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                res.json({ success: true, result: result })
+            }
+        });
+    } else {
+        call = 'select accountID from savings where bankID = ? and bankID in (select bankID from access where perID=?)'
+        connection.query(call, [req.body.bankID, user], function (err, result) {
+            if (err) {
+                res.json({ success: false, message: "" })
+            } else {
+                res.json({ success: true, result: result })
+            }
+        });
+    }
+
 }).post("/startOverdraft", function (req, res) {
     console.log("Starting Overdraft");
     let call = 'call start_overdraft(?, ?, ?, ?, ?)'
-    connection.query(call, [user, req.body.checking_bankID, req.body.checking_accountID, req.body.savings_bankID, req.body.savings_accountID], function (err, results) {
+    connection.query(call, [user, req.body.checkingbank, req.body.checkingaccount, req.body.savingsbank, req.body.savingsaccount], function (err, results) {
         if (err) {
             res.json({ success: false, message: "Could not link accounts" })
         } else {
-            res.json({ success: true, message: "Started Overdraft Protection", admin: admin })
+            res.json({ success: true, message: "Started Overdraft Protection"})
         }
     });
 }).post("/stopOverdraft", function (req, res) {
     console.log("Stopping Overdraft");
     let call = 'call stop_overdraft(?, ?, ?)'
-    connection.query(call, [user, req.body.checking_accountID, req.body.savings_accountID], function (err, results) {
+    connection.query(call, [user, req.body.checkingbank, req.body.checkingaccount], function (err, results) {
         if (err) {
             res.json({ success: false, message: "Could not link accounts" })
         } else {
-            res.json({ success: true, message: "Started Overdraft Protection", admin: admin })
+            res.json({ success: true, message: "Started Overdraft Protection"})
         }
     });
 });
@@ -511,6 +593,7 @@ app.get("/manageOverdraft", function (req, res) {
  * Transfer funds between accounts
  */
  app.get("/makeAccountTransfer", function (req, res) {
+     console.log("here1")
      let call = null
      let call2 = null
      let call3 = null
@@ -527,7 +610,6 @@ app.get("/manageOverdraft", function (req, res) {
                         if (err) {
                             res.json({ success: false, message: "" })
                         } else {
-                            console.log("reached1")
                             res.render(__dirname + "/public/" + "makeAccountTransfer.ejs", { frombanks: result1, fromaccounts: result2, tobanks: result3, toaccounts: result4 })
                         }
                     })
@@ -549,7 +631,6 @@ app.get("/manageOverdraft", function (req, res) {
                         if (err) {
                             res.json({ success: false, message: "" })
                         } else {
-                            console.log("reached1")
                             res.render(__dirname + "/public/" + "makeAccountTransfer.ejs", { frombanks: result1, fromaccounts: result2, tobanks: result3, toaccounts: result4 })
                         }
                     })
@@ -561,6 +642,7 @@ app.get("/manageOverdraft", function (req, res) {
 
 
 }).post("/getAccount1", function (req, res) {
+    console.log("here2")
     let call = null
     if (admin) {
         call = 'select accountID from bank_account where bankID = ?'
@@ -568,7 +650,6 @@ app.get("/manageOverdraft", function (req, res) {
             if (err) {
                 res.json({ success: false, message: "" })
             } else {
-                console.log("reached2")
                 res.json({ success: true, result: result })
             }
         });
@@ -579,13 +660,14 @@ app.get("/manageOverdraft", function (req, res) {
             if (err) {
                 res.json({ success: false, message: "" })
             } else {
-                console.log("reached5")
                 res.json({ success: true, result: result })
             }
         });
     }
 
 }).post("/getAccount2", function (req, res) {
+    console.log("here3")
+
     let call = null;
     if (admin) {
         call = 'select accountID from bank_account where bankID = ?'
@@ -593,7 +675,6 @@ app.get("/manageOverdraft", function (req, res) {
             if (err) {
                 res.json({ success: false, message: "" })
             } else {
-                console.log("reached2")
                 res.json({ success: true, result: result })
             }
         })
@@ -603,7 +684,6 @@ app.get("/manageOverdraft", function (req, res) {
             if (err) {
                 res.json({ success: false, message: "" })
             } else {
-                console.log("reached4")
                 res.json({ success: true, result: result })
             }
         })
